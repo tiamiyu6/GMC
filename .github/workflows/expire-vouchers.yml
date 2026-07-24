@@ -1,0 +1,19 @@
+name: Expire unpaid vouchers
+
+# Fallback scheduler for deployments that aren't on Vercel (which has its own
+# cron config in vercel.json). Not needed if you deploy to Vercel.
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  expire-vouchers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call expire-vouchers endpoint
+        run: |
+          curl --fail --show-error --silent \
+            -X POST \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "${{ secrets.APP_URL }}/api/cron/expire-vouchers"
