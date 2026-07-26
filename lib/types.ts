@@ -118,6 +118,18 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: boolean;
       };
+      admin_total_revenue: {
+        Args: Record<PropertyKey, never>;
+        Returns: number;
+      };
+      admin_revenue_since: {
+        Args: { p_since: string };
+        Returns: number;
+      };
+      admin_wallet_float: {
+        Args: Record<PropertyKey, never>;
+        Returns: number;
+      };
     };
   };
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Profile } from "@/lib/types";
 
@@ -8,9 +8,27 @@ function formatMoney(n: number): string {
   return new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
 }
 
-export default function AdminUsersManager({ initialUsers }: { initialUsers: Profile[] }) {
+export default function AdminUsersManager({
+  initialUsers,
+  totalCount,
+  query,
+}: {
+  initialUsers: Profile[];
+  totalCount: number;
+  query: string;
+}) {
   const router = useRouter();
   const [users, setUsers] = useState(initialUsers);
+  const [searchInput, setSearchInput] = useState(query);
+
+  useEffect(() => setUsers(initialUsers), [initialUsers]);
+
+  function submitSearch(e: React.FormEvent) {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (searchInput.trim()) params.set("q", searchInput.trim());
+    router.push(`/admin/users${params.toString() ? `?${params.toString()}` : ""}`);
+  }
   const [openId, setOpenId] = useState<string | null>(null);
   const [amount, setAmount] = useState("");
   const [note, setNote] = useState("");
@@ -55,11 +73,24 @@ export default function AdminUsersManager({ initialUsers }: { initialUsers: Prof
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Customers</h1>
-        <p className="mt-1 text-sm text-slate-600">
-          Credit a customer&apos;s wallet after confirming a bank transfer or cash top-up.
-        </p>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Customers</h1>
+          <p className="mt-1 text-sm text-slate-600">
+            {totalCount.toLocaleString()} customer{totalCount === 1 ? "" : "s"} across the network.
+          </p>
+        </div>
+        <form onSubmit={submitSearch} className="flex gap-2">
+          <input
+            className="input w-56"
+            placeholder="Search name or phone..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
+          <button className="btn-secondary" type="submit">
+            Search
+          </button>
+        </form>
       </div>
 
       <div className="card overflow-x-auto">

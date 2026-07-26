@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import StatusBadge from "@/components/StatusBadge";
-import type { Order, Payment } from "@/lib/types";
+import type { Order } from "@/lib/types";
 
 function formatMoney(n: number): string {
   return new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
@@ -14,26 +14,25 @@ export default async function AdminOverviewPage() {
   startOfMonth.setDate(1);
   startOfMonth.setHours(0, 0, 0, 0);
 
+  // Revenue/wallet totals are computed in the database (via RPC), not by
+  // fetching every row and summing client-side - a plain SELECT silently
+  // caps at PostgREST's default 1000-row limit, which would understate
+  // these numbers once the network has more rows than that.
   const [
-    { data: allPayments },
-    { data: monthPayments },
+    { data: totalRevenue },
+    { data: monthRevenue },
     { count: activeCount },
     { count: pendingCount },
     { count: customerCount },
-    { data: walletTotals },
+    { data: walletFloat },
     { data: pendingOrders },
   ] = await Promise.all([
-    supabase.from("payments").select("amount").eq("type", "order_payment").returns<Pick<Payment, "amount">[]>(),
-    supabase
-      .from("payments")
-      .select("amount")
-      .eq("type", "order_payment")
-      .gte("created_at", startOfMonth.toISOString())
-      .returns<Pick<Payment, "amount">[]>(),
+    supabase.rpc("admin_total_revenue"),
+    supabase.rpc("admin_revenue_since", { p_since: startOfMonth.toISOString() }),
     supabase.from("orders").select("id", { count: "exact", head: true }).eq("status", "active"),
     supabase.from("orders").select("id", { count: "exact", head: true }).eq("status", "pending_payment"),
     supabase.from("profiles").select("id", { count: "exact", head: true }).eq("role", "customer"),
-    supabase.from("profiles").select("balance"),
+    supabase.rpc("admin_wallet_float"),
     supabase
       .from("orders")
       .select("*, packages(*), profiles(id, full_name, phone)")
@@ -42,10 +41,6 @@ export default async function AdminOverviewPage() {
       .limit(8)
       .returns<Order[]>(),
   ]);
-
-  const totalRevenue = (allPayments ?? []).reduce((sum, p) => sum + Number(p.amount), 0);
-  const monthRevenue = (monthPayments ?? []).reduce((sum, p) => sum + Number(p.amount), 0);
-  const walletFloat = (walletTotals ?? []).reduce((sum, p) => sum + Number(p.balance), 0);
 
   return (
     <div className="space-y-8">
@@ -57,11 +52,11 @@ export default async function AdminOverviewPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="card">
           <p className="text-sm text-slate-500">Total revenue</p>
-          <p className="mt-1 text-2xl font-bold text-brand-700">{formatMoney(totalRevenue)}</p>
+          <p className="mt-1 text-2xl font-bold text-brand-700">{formatMoney(totalRevenue ?? 0)}</p>
         </div>
         <div className="card">
           <p className="text-sm text-slate-500">Revenue this month</p>
-          <p className="mt-1 text-2xl font-bold text-slate-900">{formatMoney(monthRevenue)}</p>
+          <p className="mt-1 text-2xl font-bold text-slate-900">{formatMoney(monthRevenue ?? 0)}</p>
         </div>
         <div className="card">
           <p className="text-sm text-slate-500">Active vouchers</p>
@@ -72,12 +67,13 @@ export default async function AdminOverviewPage() {
           <p className="mt-1 text-2xl font-bold text-amber-600">{pendingCount ?? 0}</p>
         </div>
         <div className="card">
-          <p className="text-sm text-slate-500">Customers</p>
-          <p className="mt-1 text-2xl font-bold text-slate-900">{customerCount ?? 0}</p>
+          <p className="text-sm text-slate-500">All users</p>
+          <p className="mt-1 text-2xl font-bold text-slate-900">{(customerCount ?? 0).toLocaleString()}</p>
+          <p className="mt-1 text-xs text-slate-500">across the network</p>
         </div>
         <div className="card">
           <p className="text-sm text-slate-500">Customer wallet float</p>
-          <p className="mt-1 text-2xl font-bold text-slate-900">{formatMoney(walletFloat)}</p>
+          <p className="mt-1 text-2xl font-bold text-slate-900">{formatMoney(walletFloat ?? 0)}</p>
           <p className="mt-1 text-xs text-slate-500">Prepaid balances held across all customers</p>
         </div>
       </div>

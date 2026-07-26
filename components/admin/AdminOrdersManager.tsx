@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import StatusBadge from "@/components/StatusBadge";
@@ -18,10 +19,28 @@ const FILTERS: { label: string; value: OrderStatus | "all" }[] = [
   { label: "Cancelled", value: "cancelled" },
 ];
 
-export default function AdminOrdersManager({ initialOrders }: { initialOrders: Order[] }) {
+function filterHref(status: OrderStatus | "all", query: string) {
+  const params = new URLSearchParams();
+  if (status !== "all") params.set("status", status);
+  if (query) params.set("q", query);
+  const qs = params.toString();
+  return qs ? `/admin/orders?${qs}` : "/admin/orders";
+}
+
+export default function AdminOrdersManager({
+  initialOrders,
+  totalCount,
+  status,
+  query,
+}: {
+  initialOrders: Order[];
+  totalCount: number;
+  status: OrderStatus | "all";
+  query: string;
+}) {
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>(initialOrders);
-  const [filter, setFilter] = useState<OrderStatus | "all">("all");
+  const [searchInput, setSearchInput] = useState(query);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [errorId, setErrorId] = useState<{ id: string; message: string } | null>(null);
 
@@ -38,7 +57,12 @@ export default function AdminOrdersManager({ initialOrders }: { initialOrders: O
           }
           const incoming = payload.new as Order;
           const idx = current.findIndex((o) => o.id === incoming.id);
-          if (idx === -1) return [incoming, ...current];
+          if (idx === -1) {
+            // Only splice a brand-new order into view if it matches the
+            // current status filter - otherwise it belongs on another tab.
+            if (status !== "all" && incoming.status !== status) return current;
+            return [incoming, ...current];
+          }
           const next = [...current];
           next[idx] = { ...next[idx], ...incoming };
           return next;
@@ -49,12 +73,12 @@ export default function AdminOrdersManager({ initialOrders }: { initialOrders: O
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [status]);
 
-  const visible = useMemo(
-    () => (filter === "all" ? orders : orders.filter((o) => o.status === filter)),
-    [orders, filter]
-  );
+  function submitSearch(e: React.FormEvent) {
+    e.preventDefault();
+    router.push(filterHref(status, searchInput.trim()));
+  }
 
   async function confirmPayment(id: string) {
     setBusyId(id);
@@ -85,22 +109,37 @@ export default function AdminOrdersManager({ initialOrders }: { initialOrders: O
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Vouchers</h1>
-        <p className="mt-1 text-sm text-slate-600">Updates live as customers order and vouchers expire.</p>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Vouchers</h1>
+          <p className="mt-1 text-sm text-slate-600">
+            {totalCount.toLocaleString()} matching voucher{totalCount === 1 ? "" : "s"} &middot; updates live as customers order and vouchers expire.
+          </p>
+        </div>
+        <form onSubmit={submitSearch} className="flex gap-2">
+          <input
+            className="input w-48"
+            placeholder="Search voucher code..."
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+          />
+          <button className="btn-secondary" type="submit">
+            Search
+          </button>
+        </form>
       </div>
 
       <div className="flex flex-wrap gap-2">
         {FILTERS.map((f) => (
-          <button
+          <Link
             key={f.value}
-            onClick={() => setFilter(f.value)}
+            href={filterHref(f.value, query)}
             className={`rounded-full px-3 py-1.5 text-sm font-medium ${
-              filter === f.value ? "bg-brand-600 text-white" : "bg-white text-slate-600 ring-1 ring-slate-300"
+              status === f.value ? "bg-brand-600 text-white" : "bg-white text-slate-600 ring-1 ring-slate-300"
             }`}
           >
             {f.label}
-          </button>
+          </Link>
         ))}
       </div>
 
@@ -118,7 +157,7 @@ export default function AdminOrdersManager({ initialOrders }: { initialOrders: O
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {visible.map((order) => (
+            {orders.map((order) => (
               <tr key={order.id}>
                 <td className="py-2">
                   <p className="font-medium text-slate-900">{order.profiles?.full_name ?? "-"}</p>
@@ -156,7 +195,7 @@ export default function AdminOrdersManager({ initialOrders }: { initialOrders: O
                 </td>
               </tr>
             ))}
-            {visible.length === 0 && (
+            {orders.length === 0 && (
               <tr>
                 <td colSpan={7} className="py-6 text-center text-slate-500">
                   No vouchers in this view.
