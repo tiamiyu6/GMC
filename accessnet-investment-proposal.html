@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accessnetng — Investment &amp; Partnership Proposal</title>
+<style>
+  :root{
+    color-scheme: light;
+    --navy: #14205e;
+    --navy-ink: #0b1240;
+    --blue: #2a78d6;
+    --blue-dark: #184f95;
+    --red: #e34948;
+    --surface: #fcfcfb;
+    --page: #f4f5f9;
+    --card: #ffffff;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --muted: #898781;
+    --grid: #e1e0d9;
+    --baseline: #c3c2b7;
+    --good: #0ca30c;
+    --border: rgba(11,11,11,0.10);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--page);
+    color:var(--text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height:1.55;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:0 20px 80px;}
+
+  /* ---- Hero ---- */
+  .hero{
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-ink) 100%);
+    color:#fff;
+    padding:56px 20px 44px;
+  }
+  .hero-inner{max-width:920px;margin:0 auto;}
+  .logo-row{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+  .logo-mark{width:34px;height:34px;flex:none;}
+  .logo-word{font-size:22px;font-weight:800;letter-spacing:-0.01em;}
+  .logo-word .net{color:#7fa8ec;}
+  .hero h1{font-size:clamp(28px,4.5vw,42px);margin:0 0 10px;font-weight:800;letter-spacing:-0.01em;}
+  .hero p.sub{font-size:17px;color:#c9d3f2;max-width:640px;margin:0 0 24px;}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:10px;}
+  .pill{
+    background:rgba(255,255,255,0.10);
+    border:1px solid rgba(255,255,255,0.18);
+    border-radius:999px;
+    padding:6px 14px;
+    font-size:13px;
+    color:#e7ebfa;
+  }
+
+  /* ---- Section shell ---- */
+  section{padding:40px 0;border-bottom:1px solid var(--grid);}
+  section:last-of-type{border-bottom:none;}
+  h2{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--blue-dark);
+    font-weight:800;
+    margin:0 0 6px;
+  }
+  h3.title{font-size:26px;margin:0 0 18px;font-weight:800;letter-spacing:-0.01em;}
+  p{color:var(--text-secondary);font-size:15.5px;margin:0 0 14px;}
+  .lede{font-size:17px;color:var(--text-primary);}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:24px;
+  }
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media(max-width:640px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+  /* ---- Stat tiles ---- */
+  .stat{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px;
+  }
+  .stat .n{font-size:30px;font-weight:800;color:var(--navy-ink);letter-spacing:-0.01em;}
+  .stat .l{font-size:12.5px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-top:4px;}
+  .stat .d{font-size:13px;color:var(--text-secondary);margin-top:6px;}
+
+  /* ---- Timeline ---- */
+  .tl{border-left:2px solid var(--grid);margin-left:8px;padding-left:24px;}
+  .tl-item{position:relative;padding-bottom:28px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{
+    content:"";position:absolute;left:-31px;top:4px;
+    width:12px;height:12px;border-radius:50%;
+    background:var(--blue);border:2px solid var(--card);
+    box-shadow:0 0 0 2px var(--blue);
+  }
+  .tl-item.bad::before{background:var(--red);box-shadow:0 0 0 2px var(--red);}
+  .tl-item.good::before{background:var(--good);box-shadow:0 0 0 2px var(--good);}
+  .tl-phase{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:var(--blue-dark);}
+  .tl-item.bad .tl-phase{color:var(--red);}
+  .tl-item.good .tl-phase{color:var(--good);}
+  .tl-item h4{margin:4px 0 6px;font-size:17px;}
+  .tl-item p{margin:0;}
+
+  /* ---- Charts ---- */
+  .chart-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;}
+  .chart-title{font-weight:700;font-size:15px;margin-bottom:2px;}
+  .chart-sub{font-size:12.5px;color:var(--muted);margin-bottom:18px;}
+  svg text{font-family: system-ui, -apple-system, "Segoe UI", sans-serif;}
+  .bar-val{font-weight:700;fill:var(--text-primary);font-size:13px;}
+  .bar-lbl{fill:var(--text-secondary);font-size:12px;}
+  .axis-line{stroke:var(--baseline);stroke-width:1;}
+  table.data{width:100%;border-collapse:collapse;margin-top:16px;font-size:13.5px;}
+  table.data caption{text-align:left;font-size:11px;color:var(--muted);margin-bottom:6px;caption-side:top;}
+  table.data th, table.data td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--grid);}
+  table.data th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:0.04em;}
+  table.data td.num, table.data th.num{text-align:right;font-variant-numeric:tabular-nums;}
+  .footnote{font-size:12px;color:var(--muted);margin-top:10px;}
+
+  /* ---- Pricing table ---- */
+  table.price{width:100%;border-collapse:collapse;}
+  table.price th{background:var(--navy);color:#fff;padding:10px 14px;text-align:left;font-size:12.5px;text-transform:uppercase;letter-spacing:0.04em;}
+  table.price td{padding:12px 14px;border-bottom:1px solid var(--grid);font-size:14.5px;}
+  table.price td.num{font-weight:700;color:var(--navy-ink);font-variant-numeric:tabular-nums;}
+
+  /* ---- Flow ---- */
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px;}
+  .flow .step{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13.5px;font-weight:600;}
+  .flow .arrow{color:var(--muted);font-size:16px;}
+
+  /* ---- Labeled list ---- */
+  ul.check{list-style:none;padding:0;margin:0;}
+  ul.check li{position:relative;padding-left:22px;margin-bottom:10px;font-size:14.5px;color:var(--text-secondary);}
+  ul.check li::before{content:"✓";position:absolute;left:0;color:var(--good);font-weight:800;}
+  ul.warn li::before{content:"!";color:var(--red);}
+
+  .callout{
+    background:#eef3fc;
+    border:1px solid #d6e3f7;
+    border-left:4px solid var(--blue);
+    border-radius:10px;
+    padding:18px 20px;
+  }
+  .callout.red{background:#fdecec;border-color:#f6d2d2;border-left-color:var(--red);}
+
+  .ask-box{
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-ink) 100%);
+    color:#fff;border-radius:16px;padding:32px;
+  }
+  .ask-box h3{color:#fff;font-size:22px;margin:0 0 8px;}
+  .ask-box p{color:#c9d3f2;}
+  .fill{
+    display:inline-block;border-bottom:2px dashed rgba(255,255,255,0.5);
+    min-width:160px;color:#fff;font-weight:700;padding:0 2px;
+  }
+  .contact-bar{
+    background:var(--navy-ink);color:#fff;padding:22px 20px;border-radius:14px;
+    display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:center;
+  }
+  .contact-bar a{color:#fff;font-weight:700;text-decoration:none;}
+
+  @media print{
+    .hero{background:var(--navy) !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .ask-box{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    section{break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="logo-row">
+      <svg class="logo-mark" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M24 6L8 40H16L24 24L32 40H40L24 6Z" fill="#ffffff"/>
+        <path d="M15 27a13 13 0 0 1 18 0" stroke="#7fa8ec" stroke-width="2.4" fill="none"/>
+        <path d="M18.5 31.5a8 8 0 0 1 11 0" stroke="#7fa8ec" stroke-width="2.4" fill="none"/>
+        <circle cx="24" cy="34.5" r="2" fill="#7fa8ec"/>
+      </svg>
+      <span class="logo-word">Access<span class="net">net</span>ng</span>
+    </div>
+    <h1>Investment &amp; Partnership Proposal</h1>
+    <p class="sub">Automated WiFi voucher billing for hostel communities in Malete, Kwara State — built from N0 knowledge to a 28-router network in two phases, one of them a hard failure we are transparent about.</p>
+    <div class="hero-meta">
+      <span class="pill">Malete (Downtown), Kwara State, Nigeria</span>
+      <span class="pill">Prepared August 2026</span>
+      <span class="pill">Contact: 09031438368</span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- EXEC SUMMARY -->
+  <section>
+    <h2>Executive Summary</h2>
+    <h3 class="title">A proven, working formula that is currently under-capitalized</h3>
+    <p class="lede">Accessnetng sells prepaid WiFi access — daily, weekly and monthly vouchers — to students and residents in Malete, Kwara State, through an automated billing system ("Centipede") that logs a user in the moment they pay and logs them off the moment their time runs out, with no staff sitting at a desk manually managing access. The first attempt at this business, funded by my mother, failed and closed. I rebuilt it in 2026 with a different method, and in the two months since restarting, active users grew from 13 to 140+ across roughly 30 hostels, on 28 active routers, with zero outstanding debt to any equipment vendor. This document lays out exactly how that happened, what it costs to run today, and what a partnership investment would fund next.</p>
+  </section>
+
+  <!-- TRACTION -->
+  <section>
+    <h2>Proof of Traction</h2>
+    <h3 class="title">13 → 140+ users in 8 weeks</h3>
+    <p>These are the current-phase numbers only — the 2026 restart, after moving back downtown with a better method. They exclude the earlier, unsuccessful first attempt described in the journey section below.</p>
+
+    <div class="grid2" style="margin-bottom:16px;">
+      <div class="chart-card">
+        <div class="chart-title">Active users, start vs. now</div>
+        <div class="chart-sub">2026 restart, downtown Malete — 2 month span</div>
+        <svg viewBox="0 0 380 190" width="100%" role="img" aria-label="Bar chart: 13 users at week 0, 140 users at week 8">
+          <line x1="40" y1="150" x2="360" y2="150" class="axis-line"/>
+          <rect x="70" y="138" width="70" height="12" rx="4" fill="var(--blue)"/>
+          <text x="105" y="132" text-anchor="middle" class="bar-val">13</text>
+          <text x="105" y="168" text-anchor="middle" class="bar-lbl">Week 0</text>
+
+          <rect x="220" y="30" width="70" height="120" rx="4" fill="var(--blue)"/>
+          <text x="255" y="22" text-anchor="middle" class="bar-val">140+</text>
+          <text x="255" y="168" text-anchor="middle" class="bar-lbl">Week 8 (now)</text>
+        </svg>
+        <table class="data">
+          <caption>Source: founder-reported active voucher accounts, not yet third-party audited.</caption>
+          <thead><tr><th>Checkpoint</th><th class="num">Active users</th></tr></thead>
+          <tbody>
+            <tr><td>Week 0 (restart)</td><td class="num">13</td></tr>
+            <tr><td>Week 8 (current)</td><td class="num">140+</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Monthly revenue, last 3 months</div>
+        <div class="chart-sub">₦, in the order reported by founder</div>
+        <svg viewBox="0 0 380 190" width="100%" role="img" aria-label="Bar chart of monthly revenue: 2.2 million, 1.9 million, 3.2 million naira">
+          <line x1="40" y1="150" x2="360" y2="150" class="axis-line"/>
+          <rect x="55" y="67" width="60" height="83" rx="4" fill="var(--blue)"/>
+          <text x="85" y="59" text-anchor="middle" class="bar-val">₦2.2M</text>
+          <text x="85" y="168" text-anchor="middle" class="bar-lbl">Month 1</text>
+
+          <rect x="165" y="78" width="60" height="72" rx="4" fill="var(--blue)"/>
+          <text x="195" y="70" text-anchor="middle" class="bar-val">₦1.9M</text>
+          <text x="195" y="168" text-anchor="middle" class="bar-lbl">Month 2</text>
+
+          <rect x="275" y="30" width="60" height="120" rx="4" fill="var(--blue)"/>
+          <text x="305" y="22" text-anchor="middle" class="bar-val">₦3.2M</text>
+          <text x="305" y="168" text-anchor="middle" class="bar-lbl">Month 3</text>
+        </svg>
+        <table class="data">
+          <caption>3-month average ≈ ₦2.43M/month. Revenue, not net profit — see cost structure below.</caption>
+          <thead><tr><th>Month</th><th class="num">Revenue</th></tr></thead>
+          <tbody>
+            <tr><td>Month 1</td><td class="num">₦2,200,000</td></tr>
+            <tr><td>Month 2</td><td class="num">₦1,900,000</td></tr>
+            <tr><td>Month 3</td><td class="num">₦3,200,000</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="grid3">
+      <div class="stat"><div class="n">28</div><div class="l">Active routers</div><div class="d">Deployed across the network today</div></div>
+      <div class="stat"><div class="n">~30</div><div class="l">Hostels covered</div><div class="d">Downtown Malete, Kwara State</div></div>
+      <div class="stat"><div class="n">₦0</div><div class="l">Vendor debt</div><div class="d">All equipment fully owned, no supplier owed</div></div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section>
+    <h2>How It Works</h2>
+    <h3 class="title">Automated voucher billing — no manual gatekeeping</h3>
+    <p>Users connect to the "accessnetng" WiFi network and pay for a voucher. The Centipede billing system automatically authenticates the user for exactly the period paid for, then logs them off the moment it expires — no staff manually granting or revoking access, no trust-based tabs, no under-the-table sharing of a single login across dozens of people.</p>
+    <div class="flow">
+      <div class="step">Customer pays</div><span class="arrow">→</span>
+      <div class="step">Centipede issues voucher</div><span class="arrow">→</span>
+      <div class="step">Auto login on connect</div><span class="arrow">→</span>
+      <div class="step">Auto logoff at expiry</div>
+    </div>
+
+    <h3 class="title" style="margin-top:28px;font-size:20px;">Current pricing</h3>
+    <table class="price">
+      <thead><tr><th>Plan</th><th>Access</th><th style="text-align:right;">Price</th></tr></thead>
+      <tbody>
+        <tr><td>Weekly voucher</td><td>Fast, reliable WiFi</td><td class="num" style="text-align:right;">₦5,000 / week</td></tr>
+        <tr><td>Monthly voucher</td><td>Unlimited access</td><td class="num" style="text-align:right;">₦10,000 / month</td></tr>
+      </tbody>
+    </table>
+    <p class="footnote">Earlier pricing during the first, unsuccessful attempt was a flat ₦5,000/month unlimited at one 80-room hostel — priced too low against the cost base at the time, and part of why that attempt failed (see journey below).</p>
+  </section>
+
+  <!-- JOURNEY -->
+  <section>
+    <h2>The Journey</h2>
+    <h3 class="title">Told straight — the failure is part of the proof</h3>
+    <p>I started this business at 18. I am not going to present it as a straight line up, because it was not one. The reason I believe the current formula works is precisely because I have already run the version that didn't.</p>
+
+    <div class="tl">
+      <div class="tl-item">
+        <div class="tl-phase">Phase 1 — First attempt, downtown Malete</div>
+        <h4>Starting capital: ~₦1.8M–2M, funded by my mother</h4>
+        <p>Roughly ₦1,000,000 covered a Starlink kit, a MikroTik router and 2 access points; ₦800,000 went to a solar setup; ₦200,000 to transportation. I had no one to teach me — I became my own teacher and pushed through as a first-time business owner still figuring out the basics.</p>
+      </div>
+      <div class="tl-item bad">
+        <div class="tl-phase">Phase 2 — Moved to a single 80-room hostel, went into debt</div>
+        <h4>Flat ₦5,000/month unlimited — priced below what it cost to run</h4>
+        <p>Starlink alone was ₦159,000/month at the time. Customers weren't converting fast enough to cover it, and the routers pictured in our records were bought on vendor credit — debt I was carrying while running at a loss. When students went home for the semester break, demand collapsed and the business closed. It was not sustainable at that point, and I will not pretend otherwise.</p>
+      </div>
+      <div class="tl-item good">
+        <div class="tl-phase">Phase 3 — 2026 restart, back downtown</div>
+        <h4>Better solar, a new method, and incremental funding</h4>
+        <p>I resumed in 2026, moved back downtown, and put in new batteries (one funded by my mother, one I paid for myself). Instead of over-extending on day one, I scaled in small, funded steps: a ₦250,000 loan financed 5 additional routers, then 5 more after that, building up to 28 active routers covering roughly 30 hostels — this time with no vendor debt. That method is what took us from 13 to 140+ users in two months and to consistent monthly revenue in the ₦1.9M–₦3.2M range.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINANCIAL TRANSPARENCY -->
+  <section>
+    <h2>Financial Transparency</h2>
+    <h3 class="title">Where the money came from, and where it goes today</h3>
+
+    <div class="grid2">
+      <div class="card">
+        <div class="chart-title" style="margin-bottom:10px;">Capital history</div>
+        <table class="data">
+          <thead><tr><th>Source</th><th>Use</th><th class="num">Amount</th></tr></thead>
+          <tbody>
+            <tr><td>Mother (seed)</td><td>Starlink kit, MikroTik, 2 APs</td><td class="num">≈ ₦1,000,000</td></tr>
+            <tr><td>Mother (seed)</td><td>Solar power setup</td><td class="num">≈ ₦800,000</td></tr>
+            <tr><td>Mother (seed)</td><td>Transportation / logistics</td><td class="num">≈ ₦200,000</td></tr>
+            <tr><td>Loan (Access)</td><td>+10 routers (expansion, 2026)</td><td class="num">₦250,000</td></tr>
+          </tbody>
+        </table>
+        <p class="footnote">Figures as recalled and reported by the founder; no audited financial statements exist yet. Formal bookkeeping is one of the improvements this partnership would fund.</p>
+      </div>
+
+      <div class="card">
+        <div class="chart-title" style="margin-bottom:10px;">Current monthly cost structure</div>
+        <table class="data">
+          <thead><tr><th>Item</th><th class="num">Monthly cost</th></tr></thead>
+          <tbody>
+            <tr><td>Starlink subscription</td><td class="num">≈ ₦57,000</td></tr>
+            <tr><td>Generator fuel (₦10,000/day)</td><td class="num">≈ ₦300,000</td></tr>
+            <tr><td>Centipede billing platform</td><td class="num">≈ $5 (~₦8,000)</td></tr>
+            <tr><td><strong>Known fixed costs</strong></td><td class="num"><strong>≈ ₦365,000</strong></td></tr>
+          </tbody>
+        </table>
+        <p class="footnote">Against 3-month average revenue of ≈ ₦2.43M, that implies a gross margin of roughly 85% <em>before</em> router financing, maintenance, transportation and labor — an estimate, not a certified net-profit figure.</p>
+      </div>
+    </div>
+
+    <ul class="check" style="margin-top:20px;">
+      <li>Zero outstanding debt to any equipment vendor — every router in the network is fully owned.</li>
+      <li>Every figure above is the founder's own reporting. We are stating this plainly rather than presenting it as audited fact, because that is what real transparency requires.</li>
+    </ul>
+  </section>
+
+  <!-- THE PROBLEM / WHY INVEST NOW -->
+  <section>
+    <h2>The Problem This Investment Solves</h2>
+    <h3 class="title">Unsteady solar is the single biggest cost leak</h3>
+    <div class="callout red">
+      <p style="margin:0;color:#7a1f1e;"><strong>₦10,000/day in fuel</strong> (≈ ₦300,000/month, ≈ ₦3.65M/year) is currently being burned on generator backup because the existing solar setup is not steady enough to run the network without it. This is the largest single cost item in the business — larger than the Starlink subscription itself.</p>
+    </div>
+    <p style="margin-top:14px;">A properly sized, steady solar power system removes most or all of this daily fuel dependency. Every naira it eliminates converts directly into margin, without needing a single new customer — and it removes the biggest operational risk (fuel availability and price volatility) from a business that already has a proven customer-acquisition formula.</p>
+  </section>
+
+  <!-- THE ASK -->
+  <section>
+    <div class="ask-box">
+      <h3>The Ask: A Partnership, Not Just a Loan</h3>
+      <p>I've spent the last few years teaching and consulting other operators who have gone on to build setups now earning an estimated ₦5,000,000+ a month combined, on a formula I worked out — while being paid very little for that knowledge myself. I'm not looking to repeat that. I'm looking for a partner who invests directly in Accessnetng, shares in what it earns, and helps fund the infrastructure — starting with steady solar — that turns a working formula into a business that runs without a daily fuel bill hanging over it.</p>
+      <table class="data" style="margin-top:18px;">
+        <thead><tr style="color:#c9d3f2;"><th style="color:#c9d3f2;border-color:rgba(255,255,255,0.15);">Use of funds</th><th class="num" style="color:#c9d3f2;border-color:rgba(255,255,255,0.15);">Amount</th></tr></thead>
+        <tbody>
+          <tr><td style="color:#fff;border-color:rgba(255,255,255,0.15);">Steady solar power system (priority 1 — removes ₦300K/month fuel cost)</td><td class="num" style="color:#fff;border-color:rgba(255,255,255,0.15);"><span class="fill">&nbsp;</span></td></tr>
+          <tr><td style="color:#fff;border-color:rgba(255,255,255,0.15);">Additional routers / new hostel coverage</td><td class="num" style="color:#fff;border-color:rgba(255,255,255,0.15);"><span class="fill">&nbsp;</span></td></tr>
+          <tr><td style="color:#fff;border-color:rgba(255,255,255,0.15);">Formal bookkeeping &amp; proof-of-funds audit</td><td class="num" style="color:#fff;border-color:rgba(255,255,255,0.15);"><span class="fill">&nbsp;</span></td></tr>
+        </tbody>
+      </table>
+      <p class="footnote" style="color:#a9b6de;">Exact investment amount and partnership/equity terms to be finalized directly with the founder — intentionally left open here rather than filled with a placeholder number, so nothing in this proposal overstates what has been agreed.</p>
+    </div>
+  </section>
+
+  <!-- RISKS -->
+  <section>
+    <h2>Risks &amp; Honest Disclosures</h2>
+    <h3 class="title">What could go wrong</h3>
+    <ul class="check warn">
+      <li>Seasonal demand: when students go home for breaks, active users and revenue drop — this is what closed the business the first time.</li>
+      <li>Power dependency: until solar is steady, the network relies on fuel, which is a volatile daily cost.</li>
+      <li>Key-person risk: billing, maintenance and router deployment currently run through one operator (the founder).</li>
+      <li>No audited financials yet: every number in this document is founder-reported and self-tracked, not third-party verified.</li>
+    </ul>
+  </section>
+
+  <!-- CONTACT -->
+  <section style="border-bottom:none;">
+    <div class="contact-bar">
+      <div>
+        <div style="font-weight:800;font-size:16px;">Accessnetng</div>
+        <div style="font-size:13px;color:#c9d3f2;">Malete (Downtown), Kwara State, Nigeria</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:13px;color:#c9d3f2;">For partnership discussions</div>
+        <a href="tel:09031438368">09031438368</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
