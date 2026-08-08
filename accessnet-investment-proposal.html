@@ -157,6 +157,18 @@
   }
   .ask-box h3{color:#fff;font-size:22px;margin:0 0 8px;}
   .ask-box p{color:#c9d3f2;}
+  .ask-box ul.check li{color:#dbe3f7;}
+  .ask-box ul.check li::before{color:#5fe07d;}
+  .ask-box .footnote{color:#a9b6de;}
+
+  /* ---- Calculator ---- */
+  .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 24px;margin-top:16px;}
+  .calc-field-wide{grid-column:1 / -1;}
+  .calc-field label{display:block;font-size:12.5px;font-weight:700;color:var(--text-primary);margin-bottom:8px;}
+  .calc-field-row{display:flex;align-items:center;gap:12px;}
+  .calc-field-row input[type="range"]{flex:1;accent-color:var(--blue);height:4px;}
+  .calc-field-val{font-variant-numeric:tabular-nums;font-weight:700;font-size:14px;color:var(--navy-ink);white-space:nowrap;min-width:90px;text-align:right;}
+  @media(max-width:640px){.calc-grid{grid-template-columns:1fr;}}
   .fill{
     display:inline-block;border-bottom:2px dashed rgba(255,255,255,0.5);
     min-width:160px;color:#fff;font-weight:700;padding:0 2px;
@@ -203,7 +215,7 @@
   <section>
     <h2>Executive Summary</h2>
     <h3 class="title">A proven, working formula that is currently under-capitalized</h3>
-    <p class="lede">Accessnetng sells prepaid WiFi access — daily, weekly and monthly vouchers — to students and residents in Malete, Kwara State, through an automated billing system ("Centipede") that logs a user in the moment they pay and logs them off the moment their time runs out, with no staff sitting at a desk manually managing access. The first attempt at this business, funded by my mother, failed and closed. I rebuilt it in 2026 with a different method, and in the two months since restarting, active users grew from 13 to 140+ across roughly 30 hostels, on 28 active routers, with zero outstanding debt to any equipment vendor. This document lays out exactly how that happened, what it costs to run today, and what a partnership investment would fund next.</p>
+    <p class="lede">Accessnetng sells prepaid WiFi access — daily, weekly and monthly vouchers — to students and residents in Malete, Kwara State, through an automated billing system ("Centipid") that logs a user in the moment they pay and logs them off the moment their time runs out, with no staff sitting at a desk manually managing access. The first attempt at this business, funded by my mother, failed and closed. I rebuilt it in 2026 with a different method, and in the two months since restarting, active users grew from 13 to 140+ across roughly 30 hostels, on 28 active routers, with zero outstanding debt to any equipment vendor. This document lays out exactly how that happened, what it costs to run today, and what a partnership investment would fund next.</p>
   </section>
 
   <!-- TRACTION -->
@@ -272,14 +284,30 @@
     </div>
   </section>
 
+  <!-- VERIFIED PROOF -->
+  <section>
+    <h2>Verified Proof</h2>
+    <h3 class="title">Not a claim — a running system with a log</h3>
+    <p>Every voucher AccessNetNG sells is issued and redeemed through a live billing dashboard, not tracked on paper or by memory. These are the platform's own numbers, read directly off the dashboard, not founder estimates:</p>
+    <div class="grid3">
+      <div class="stat"><div class="n">2,107</div><div class="l">Vouchers generated</div><div class="d">Total codes issued to date</div></div>
+      <div class="stat"><div class="n">2,058</div><div class="l">Vouchers redeemed</div><div class="d">98% redemption rate</div></div>
+      <div class="stat"><div class="n">1,477</div><div class="l">Print batches</div><div class="d">49 unused codes still redeemable</div></div>
+    </div>
+    <figure style="margin:20px 0 0;">
+      <img src="assets/voucher-dashboard.png" alt="AccessNetNG voucher dashboard showing 2,107 total vouchers, 2,058 used, 98% redemption rate" style="width:100%;border-radius:14px;border:1px solid var(--border);display:block;" onerror="this.closest('figure').style.display='none';">
+    </figure>
+    <p class="footnote">Dashboard: acessnetng.centipidtechnologies.com. Screenshot captured 8 Aug 2026 — live counts change daily as vouchers are generated and redeemed. Full read access can be granted to a serious investor directly on the platform.</p>
+  </section>
+
   <!-- HOW IT WORKS -->
   <section>
     <h2>How It Works</h2>
     <h3 class="title">Automated voucher billing — no manual gatekeeping</h3>
-    <p>Users connect to the "accessnetng" WiFi network and pay for a voucher. The Centipede billing system automatically authenticates the user for exactly the period paid for, then logs them off the moment it expires — no staff manually granting or revoking access, no trust-based tabs, no under-the-table sharing of a single login across dozens of people.</p>
+    <p>Users connect to the "accessnetng" WiFi network and pay for a voucher. The Centipid billing system automatically authenticates the user for exactly the period paid for, then logs them off the moment it expires — no staff manually granting or revoking access, no trust-based tabs, no under-the-table sharing of a single login across dozens of people.</p>
     <div class="flow">
       <div class="step">Customer pays</div><span class="arrow">→</span>
-      <div class="step">Centipede issues voucher</div><span class="arrow">→</span>
+      <div class="step">Centipid issues voucher</div><span class="arrow">→</span>
       <div class="step">Auto login on connect</div><span class="arrow">→</span>
       <div class="step">Auto logoff at expiry</div>
     </div>
@@ -361,7 +389,7 @@
           <tbody>
             <tr><td>Starlink subscription</td><td class="num">≈ ₦57,000</td></tr>
             <tr><td>Generator fuel (₦10,000/day)</td><td class="num">≈ ₦300,000</td></tr>
-            <tr><td>Centipede billing platform</td><td class="num">≈ $5 (~₦8,000)</td></tr>
+            <tr><td>Centipid billing platform</td><td class="num">≈ $5 (~₦8,000)</td></tr>
             <tr><td><strong>Known fixed costs</strong></td><td class="num"><strong>≈ ₦365,000</strong></td></tr>
           </tbody>
         </table>
@@ -408,7 +436,7 @@
   <!-- THE ASK -->
   <section>
     <h2>The Ask</h2>
-    <h3 class="title">Recommended investment: ₦2,500,000</h3>
+    <h3 class="title">Recommended investment: ₦5,000,000</h3>
     <p class="lede">I've spent the last few years teaching and consulting other operators who have gone on to build setups now earning an estimated ₦5,000,000+ a month combined, on a formula I worked out — while being paid very little for that knowledge myself. I'm not looking to repeat that. I'm looking for a partner who invests directly in Accessnetng, shares in what it earns, and funds the infrastructure that turns a working formula into a business that isn't bleeding cash on fuel every day.</p>
 
     <div class="grid2" style="margin-top:16px;">
@@ -418,12 +446,14 @@
           <thead><tr><th>Item</th><th class="num">Amount</th></tr></thead>
           <tbody>
             <tr><td>Steady solar power system — removes ₦300K/month fuel cost</td><td class="num">₦1,500,000</td></tr>
-            <tr><td>≈ 25–30 additional routers &amp; cabling (new hostel coverage, at the ≈ ₦25K/unit rate already proven)</td><td class="num">₦750,000</td></tr>
+            <tr><td>30 additional routers &amp; cabling — reaches the 58-router, 12-month target directly (see outlook below)</td><td class="num">₦750,000</td></tr>
             <tr><td>CAC registration, formal bookkeeping &amp; audit setup</td><td class="num">₦250,000</td></tr>
-            <tr><td><strong>Total</strong></td><td class="num"><strong>₦2,500,000</strong></td></tr>
+            <tr><td>Local agent hiring &amp; training — reduces key-person dependency on the founder</td><td class="num">₦1,000,000</td></tr>
+            <tr><td>Working capital / repayment safety buffer — keeps principal repayment on schedule through seasonal dips</td><td class="num">₦1,500,000</td></tr>
+            <tr><td><strong>Total</strong></td><td class="num"><strong>₦5,000,000</strong></td></tr>
           </tbody>
         </table>
-        <p class="footnote">Solar figure is sized to current fuel spend, pending a final vendor quote — the ₦2,000,000–₦3,000,000 range covers likely variance.</p>
+        <p class="footnote">Solar figure is sized to current fuel spend, pending a final vendor quote. Router count assumes the ≈ ₦25K/unit all-in rate already proven by the ₦250,000 / 10-router expansion.</p>
       </div>
       <div class="card">
         <div class="chart-title" style="margin-bottom:10px;">Why it pays back fast</div>
@@ -439,14 +469,115 @@
       <h3>Proposed Partnership Terms</h3>
       <p>A starting point for discussion, not a signed agreement:</p>
       <ul class="check" style="margin-top:12px;">
-        <li style="color:#fff;">Investor contributes ₦2,500,000.</li>
-        <li style="color:#fff;">Receives 30% of monthly net profit until 2× the investment (₦5,000,000) has been returned.</li>
-        <li style="color:#fff;">Share then steps down to 10% of monthly net profit for the life of the partnership.</li>
-        <li style="color:#fff;">Founder retains full day-to-day operational control.</li>
+        <li>Investor contributes ₦5,000,000.</li>
+        <li>Principal returned in full within 12 months, paid down monthly from net profit.</li>
+        <li>Once the ₦5,000,000 is fully repaid, investor receives 30% of monthly net profit for a further 6 months — a return on top of, and aside from, the ₦5,000,000 principal.</li>
+        <li>All equipment, infrastructure and materials purchased with this investment remain the sole property of Accessnetng — this is a profit-share financing arrangement, not an equity or asset-ownership stake.</li>
+        <li>Founder retains full day-to-day operational control.</li>
       </ul>
-      <p class="footnote" style="color:#a9b6de;">At the current ≈ ₦2.07M/month net (before this investment), 30% is ≈ ₦621,000/month — illustrative only, not a promised return. Actual payout depends on continued demand growth and execution; terms are open to negotiation.</p>
+      <p class="footnote">This is the structure the calculator below runs on. Terms are open to negotiation.</p>
+    </div>
+
+    <div class="card" style="margin-top:20px;" id="calc">
+      <div class="chart-title" style="margin-bottom:2px;">Investment Return Calculator</div>
+      <div class="chart-sub">Adjust the numbers to see your own breakdown — repayment, profit share, and total return.</div>
+
+      <div class="calc-grid">
+        <div class="calc-field">
+          <label for="calcAmount">Investment amount</label>
+          <div class="calc-field-row">
+            <input type="range" id="calcAmount" min="1000000" max="10000000" step="250000" value="5000000">
+            <span class="calc-field-val">₦<span id="calcAmountVal">5,000,000</span></span>
+          </div>
+        </div>
+        <div class="calc-field">
+          <label for="calcRepayMonths">Principal repayment period</label>
+          <div class="calc-field-row">
+            <input type="range" id="calcRepayMonths" min="6" max="24" step="1" value="12">
+            <span class="calc-field-val"><span id="calcRepayMonthsVal">12</span> months</span>
+          </div>
+        </div>
+        <div class="calc-field">
+          <label for="calcShareMonths">Profit-share period (after repayment)</label>
+          <div class="calc-field-row">
+            <input type="range" id="calcShareMonths" min="1" max="12" step="1" value="6">
+            <span class="calc-field-val"><span id="calcShareMonthsVal">6</span> months</span>
+          </div>
+        </div>
+        <div class="calc-field">
+          <label for="calcSharePct">Profit-share percentage</label>
+          <div class="calc-field-row">
+            <input type="range" id="calcSharePct" min="10" max="50" step="5" value="30">
+            <span class="calc-field-val"><span id="calcSharePctVal">30</span>%</span>
+          </div>
+        </div>
+        <div class="calc-field calc-field-wide">
+          <label for="calcNetProfit">Assumed monthly net profit during the share period</label>
+          <div class="calc-field-row">
+            <input type="range" id="calcNetProfit" min="1000000" max="6000000" step="100000" value="3000000">
+            <span class="calc-field-val">₦<span id="calcNetProfitVal">3,000,000</span> / month</span>
+          </div>
+          <p class="footnote" style="margin-top:6px;">Current net is ≈ ₦2.07M/month; the 12-month outlook projects ≈ ₦3.4M–₦4.9M/month once solar and expansion land. Default here is a mid-range, adjustable estimate.</p>
+        </div>
+      </div>
+
+      <div class="grid3" style="margin-top:20px;">
+        <div class="stat"><div class="n" id="outMonthlyPrincipal">₦416,667</div><div class="l">Monthly principal repayment</div><div class="d" id="outRepayWindow">Months 1–12</div></div>
+        <div class="stat"><div class="n" id="outMonthlyShare">₦900,000</div><div class="l">Monthly profit-share payment</div><div class="d" id="outShareWindow">Months 13–18</div></div>
+        <div class="stat"><div class="n" id="outTotalReturn">₦10,400,000</div><div class="l">Total returned to investor</div><div class="d">Principal + profit share</div></div>
+      </div>
+      <div class="grid2" style="margin-top:16px;">
+        <div class="stat"><div class="n" id="outNetGain">₦5,400,000</div><div class="l">Net gain above principal</div><div class="d" id="outReturnPct">108% total return</div></div>
+        <div class="stat"><div class="n" id="outTimeline">18 months</div><div class="l">Total timeline</div><div class="d">Repayment + profit-share windows combined</div></div>
+      </div>
+      <p class="footnote" style="margin-top:14px;">Illustrative, not a guarantee — actual repayment and profit share depend on real monthly net profit, which is not fixed. All routers, solar equipment and other materials purchased with this investment remain Accessnetng's property throughout and after this arrangement.</p>
     </div>
   </section>
+
+  <script>
+  (function(){
+    function fmt(n){ return Math.round(n).toLocaleString('en-US'); }
+    var amount = document.getElementById('calcAmount');
+    var repayMonths = document.getElementById('calcRepayMonths');
+    var shareMonths = document.getElementById('calcShareMonths');
+    var sharePct = document.getElementById('calcSharePct');
+    var netProfit = document.getElementById('calcNetProfit');
+    var inputs = [amount, repayMonths, shareMonths, sharePct, netProfit];
+
+    function recalc(){
+      var A = Number(amount.value);
+      var RM = Number(repayMonths.value);
+      var SM = Number(shareMonths.value);
+      var SP = Number(sharePct.value);
+      var NP = Number(netProfit.value);
+
+      var monthlyPrincipal = A / RM;
+      var monthlyShare = (SP/100) * NP;
+      var totalShare = monthlyShare * SM;
+      var totalReturn = A + totalShare;
+      var netGain = totalShare;
+      var returnPct = (netGain / A) * 100;
+      var timeline = RM + SM;
+
+      document.getElementById('calcAmountVal').textContent = fmt(A);
+      document.getElementById('calcRepayMonthsVal').textContent = RM;
+      document.getElementById('calcShareMonthsVal').textContent = SM;
+      document.getElementById('calcSharePctVal').textContent = SP;
+      document.getElementById('calcNetProfitVal').textContent = fmt(NP);
+
+      document.getElementById('outMonthlyPrincipal').textContent = '₦' + fmt(monthlyPrincipal);
+      document.getElementById('outRepayWindow').textContent = 'Months 1–' + RM;
+      document.getElementById('outMonthlyShare').textContent = '₦' + fmt(monthlyShare);
+      document.getElementById('outShareWindow').textContent = 'Months ' + (RM+1) + '–' + timeline;
+      document.getElementById('outTotalReturn').textContent = '₦' + fmt(totalReturn);
+      document.getElementById('outNetGain').textContent = '₦' + fmt(netGain);
+      document.getElementById('outReturnPct').textContent = Math.round(returnPct) + '% total return';
+      document.getElementById('outTimeline').textContent = timeline + ' months';
+    }
+    inputs.forEach(function(el){ el.addEventListener('input', recalc); });
+    recalc();
+  })();
+  </script>
 
   <!-- 12-MONTH OUTLOOK -->
   <section>
