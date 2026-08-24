@@ -553,7 +553,7 @@
   document.getElementById("typeFilter").addEventListener("change", renderLog);
   document.getElementById("printBtn").addEventListener("click", () => window.print());
 
-  document.getElementById("exportBtn").addEventListener("click", function () {
+  function buildCsv() {
     const rows = [["Date", "Type", "Drug", "Dosage", "Qty", "Unit Price", "Total", "Patient", "Handled By", "Balance After"]];
     [...data.log].sort((a, b) => (a.date < b.date ? -1 : 1)).forEach(e => {
       rows.push([
@@ -561,16 +561,46 @@
         e.unitPrice, e.qty * e.unitPrice, e.patient || "", e.handledBy || "", e.balanceAfter
       ]);
     });
-    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    return rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+  }
+
+  function downloadViaAnchor(filename, csv) {
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `longlife-pharmacy-log-${todayStr()}.csv`;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
+  }
+
+  document.getElementById("exportBtn").addEventListener("click", async function () {
+    const csv = buildCsv();
+    const filename = `longlife-pharmacy-log-${todayStr()}.csv`;
+
+    if (window.claude && typeof window.claude.use === "function") {
+      try {
+        const downloads = await window.claude.use("downloads");
+        if (downloads) {
+          try {
+            await downloads.save({ filename, data: csv });
+            return;
+          } catch (err) {
+            if (err && err.code === "declined") return;
+            if (err && err.code === "extension_not_enabled") {
+              try {
+                await downloads.save({ filename: filename.replace(/\.csv$/, ".txt"), data: csv });
+                return;
+              } catch (err2) { /* fall through to anchor download */ }
+            }
+          }
+        }
+      } catch (e) { /* claude capability unavailable, fall through */ }
+    }
+
+    downloadViaAnchor(filename, csv);
   });
 
   document.getElementById("inDate").value = todayStr();
