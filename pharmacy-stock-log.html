@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Longlife Hospital Pharmacy — Stock &amp; Sales Log</title>
+<link rel="stylesheet" href="GMC.CSS">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #f4f6f5; color: #222; }
+  header.page-head {
+    background: #04aa6d; color: #fff; padding: 18px 20px;
+  }
+  header.page-head h1 { margin: 0; font-size: 22px; }
+  header.page-head p { margin: 4px 0 0; font-size: 13px; opacity: .9; }
+  nav.crumbs { background: #333; padding: 10px 20px; }
+  nav.crumbs a { color: #f2f2f2; text-decoration: none; font-size: 14px; margin-right: 16px; }
+  nav.crumbs a:hover { color: #04aa6d; }
+
+  main { max-width: 1150px; margin: 0 auto; padding: 20px; }
+
+  .summary { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+  .card {
+    background: #fff; border-radius: 8px; padding: 14px 18px; flex: 1 1 160px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.12); border-left: 4px solid #04aa6d;
+  }
+  .card.warn { border-left-color: #e6a700; }
+  .card.danger { border-left-color: #d9534f; }
+  .card .num { font-size: 26px; font-weight: bold; }
+  .card .label { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: .04em; }
+
+  section { background: #fff; border-radius: 8px; padding: 16px 18px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+  section h2 { margin-top: 0; font-size: 17px; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; }
+
+  form.grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; align-items: end; }
+  form.grid-form label { display: block; font-size: 12px; color: #555; margin-bottom: 3px; }
+  form.grid-form input, form.grid-form select { width: 100%; padding: 7px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+  form.grid-form button { padding: 8px 14px; background: #04aa6d; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+  form.grid-form button:hover { background: #038a58; }
+  form.grid-form.out button { background: #d9534f; }
+  form.grid-form.out button:hover { background: #c9302c; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid #eee; white-space: nowrap; }
+  th { background: #fafafa; position: sticky; top: 0; }
+  tbody tr:hover { background: #f9fdfb; }
+  .table-wrap { overflow-x: auto; max-height: 420px; overflow-y: auto; }
+
+  .badge { padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; color: #fff; }
+  .badge.in { background: #04aa6d; }
+  .badge.low { background: #e6a700; }
+  .badge.out { background: #d9534f; }
+  .tag { padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
+  .tag.IN { background: #dff5ec; color: #04aa6d; }
+  .tag.OUT { background: #fbe4e2; color: #d9534f; }
+
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; align-items: center; }
+  .toolbar input, .toolbar select { padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+  .toolbar button { padding: 6px 12px; border: 1px solid #04aa6d; background: #fff; color: #04aa6d; border-radius: 4px; cursor: pointer; font-size: 13px; }
+  .toolbar button:hover { background: #04aa6d; color: #fff; }
+  .toolbar .spacer { flex: 1; }
+  .empty-row td { text-align: center; color: #888; padding: 18px; }
+  small.hint { color: #777; }
+  .actions button { background: none; border: none; color: #d9534f; cursor: pointer; font-size: 12px; text-decoration: underline; }
+
+  @media print {
+    nav.crumbs, .toolbar, form.grid-form, .actions { display: none !important; }
+    section { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="page-head">
+  <h1>Longlife Hospital Pharmacy</h1>
+  <p>Stock &amp; Sales Log Book — track drugs in stock, drugs sold out, dispensers and patients</p>
+</header>
+<nav class="crumbs">
+  <a href="GMC.HTML">HOME</a>
+  <a href="index.html">SITE</a>
+  <a href="pharmacy-stock-log.html" class="active">PHARMACY LOG</a>
+</nav>
+
+<main>
+
+  <div class="summary" id="summaryCards"></div>
+
+  <section>
+    <h2>1. Drug Inventory</h2>
+    <small class="hint">Add every drug the pharmacy stocks. Stock level updates automatically from the transaction log below.</small>
+    <form class="grid-form" id="drugForm" style="margin-top:12px;">
+      <div>
+        <label>Drug Name</label>
+        <input type="text" id="drugName" placeholder="e.g. Paracetamol" required>
+      </div>
+      <div>
+        <label>Dosage / Strength</label>
+        <input type="text" id="drugDosage" placeholder="e.g. 500mg tablet" required>
+      </div>
+      <div>
+        <label>Unit Price (₦)</label>
+        <input type="number" id="drugPrice" min="0" step="0.01" required>
+      </div>
+      <div>
+        <label>Opening Stock (qty)</label>
+        <input type="number" id="drugOpeningStock" min="0" step="1" value="0" required>
+      </div>
+      <div>
+        <label>Reorder Level</label>
+        <input type="number" id="drugReorder" min="0" step="1" value="10">
+      </div>
+      <div><button type="submit">+ Add Drug</button></div>
+    </form>
+
+    <div class="table-wrap" style="margin-top:14px;">
+      <table>
+        <thead>
+          <tr><th>Drug</th><th>Dosage</th><th>Unit Price</th><th>Current Stock</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody id="inventoryBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>2. Record Stock In (drug received)</h2>
+    <form class="grid-form" id="stockInForm">
+      <div>
+        <label>Drug</label>
+        <select id="inDrug" required></select>
+      </div>
+      <div>
+        <label>Quantity Received</label>
+        <input type="number" id="inQty" min="1" step="1" required>
+      </div>
+      <div>
+        <label>Received By</label>
+        <input type="text" id="inReceivedBy" placeholder="Staff name" required>
+      </div>
+      <div>
+        <label>Date</label>
+        <input type="date" id="inDate" required>
+      </div>
+      <div><button type="submit">+ Add Stock</button></div>
+    </form>
+  </section>
+
+  <section>
+    <h2>3. Record Sale (drug dispensed / sold out)</h2>
+    <form class="grid-form out" id="stockOutForm">
+      <div>
+        <label>Drug</label>
+        <select id="outDrug" required></select>
+      </div>
+      <div>
+        <label>Quantity Sold</label>
+        <input type="number" id="outQty" min="1" step="1" required>
+      </div>
+      <div>
+        <label>Patient Name</label>
+        <input type="text" id="outPatient" placeholder="Patient name" required>
+      </div>
+      <div>
+        <label>Dispensed By</label>
+        <input type="text" id="outDispensedBy" placeholder="Staff who took it out" required>
+      </div>
+      <div>
+        <label>Date</label>
+        <input type="date" id="outDate" required>
+      </div>
+      <div><button type="submit">Record Sale</button></div>
+    </form>
+    <small class="hint" id="outStockHint"></small>
+  </section>
+
+  <section>
+    <h2>4. Transaction Log Book</h2>
+    <div class="toolbar">
+      <input type="text" id="searchBox" placeholder="Search drug, patient or staff...">
+      <select id="typeFilter">
+        <option value="">All Types</option>
+        <option value="IN">Stock In</option>
+        <option value="OUT">Sold Out</option>
+      </select>
+      <div class="spacer"></div>
+      <button id="exportBtn" type="button">Export CSV</button>
+      <button id="printBtn" type="button">Print</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th><th>Type</th><th>Drug</th><th>Dosage</th><th>Qty</th>
+            <th>Unit Price</th><th>Total</th><th>Patient</th><th>Handled By</th><th>Balance After</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="logBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  const STORAGE_KEY = "longlife_pharmacy_data_v1";
+
+  function loadData() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) { /* fall through to defaults */ }
+    return { drugs: [], log: [] };
+  }
+
+  function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+
+  let data = loadData();
+
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+  function money(n) { return "₦" + Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function todayStr() { return new Date().toISOString().slice(0, 10); }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  function currentStock(drugId) {
+    const drug = data.drugs.find(d => d.id === drugId);
+    if (!drug) return 0;
+    let stock = Number(drug.openingStock);
+    for (const entry of data.log) {
+      if (entry.drugId !== drugId) continue;
+      stock += entry.type === "IN" ? entry.qty : -entry.qty;
+    }
+    return stock;
+  }
+
+  function statusFor(drug) {
+    const stock = currentStock(drug.id);
+    if (stock <= 0) return { label: "Sold Out", cls: "out" };
+    if (stock <= Number(drug.reorderLevel || 0)) return { label: "Low Stock", cls: "low" };
+    return { label: "In Stock", cls: "in" };
+  }
+
+  function populateDrugSelects() {
+    const options = data.drugs
+      .map(d => `<option value="${d.id}">${escapeHtml(d.name)} (${escapeHtml(d.dosage)})</option>`)
+      .join("");
+    const placeholder = `<option value="" disabled selected>Select a drug</option>`;
+    document.getElementById("inDrug").innerHTML = placeholder + options;
+    document.getElementById("outDrug").innerHTML = placeholder + options;
+  }
+
+  function renderSummary() {
+    const total = data.drugs.length;
+    const soldOut = data.drugs.filter(d => currentStock(d.id) <= 0).length;
+    const low = data.drugs.filter(d => { const s = currentStock(d.id); return s > 0 && s <= Number(d.reorderLevel || 0); }).length;
+    const totalSalesValue = data.log.filter(e => e.type === "OUT").reduce((sum, e) => sum + e.qty * e.unitPrice, 0);
+
+    document.getElementById("summaryCards").innerHTML = `
+      <div class="card"><div class="num">${total}</div><div class="label">Drugs Tracked</div></div>
+      <div class="card danger"><div class="num">${soldOut}</div><div class="label">Sold Out</div></div>
+      <div class="card warn"><div class="num">${low}</div><div class="label">Low Stock</div></div>
+      <div class="card"><div class="num">${money(totalSalesValue)}</div><div class="label">Total Sales Value</div></div>
+    `;
+  }
+
+  function renderInventory() {
+    const body = document.getElementById("inventoryBody");
+    if (data.drugs.length === 0) {
+      body.innerHTML = `<tr class="empty-row"><td colspan="6">No drugs added yet. Add one above.</td></tr>`;
+      return;
+    }
+    body.innerHTML = data.drugs.map(d => {
+      const stock = currentStock(d.id);
+      const st = statusFor(d);
+      return `<tr>
+        <td>${escapeHtml(d.name)}</td>
+        <td>${escapeHtml(d.dosage)}</td>
+        <td>${money(d.unitPrice)}</td>
+        <td>${stock}</td>
+        <td><span class="badge ${st.cls}">${st.label}</span></td>
+        <td class="actions"><button data-remove-drug="${d.id}">Remove</button></td>
+      </tr>`;
+    }).join("");
+  }
+
+  function renderLog() {
+    const search = document.getElementById("searchBox").value.trim().toLowerCase();
+    const typeFilter = document.getElementById("typeFilter").value;
+    const body = document.getElementById("logBody");
+
+    let entries = [...data.log].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : b.createdAt - a.createdAt));
+
+    if (typeFilter) entries = entries.filter(e => e.type === typeFilter);
+    if (search) {
+      entries = entries.filter(e =>
+        e.drugName.toLowerCase().includes(search) ||
+        (e.patient || "").toLowerCase().includes(search) ||
+        (e.handledBy || "").toLowerCase().includes(search)
+      );
+    }
+
+    if (entries.length === 0) {
+      body.innerHTML = `<tr class="empty-row"><td colspan="11">No transactions recorded yet.</td></tr>`;
+      return;
+    }
+
+    body.innerHTML = entries.map(e => `
+      <tr>
+        <td>${e.date}</td>
+        <td><span class="tag ${e.type}">${e.type === "IN" ? "Stock In" : "Sold Out"}</span></td>
+        <td>${escapeHtml(e.drugName)}</td>
+        <td>${escapeHtml(e.dosage)}</td>
+        <td>${e.qty}</td>
+        <td>${money(e.unitPrice)}</td>
+        <td>${money(e.qty * e.unitPrice)}</td>
+        <td>${e.type === "OUT" ? escapeHtml(e.patient || "") : "—"}</td>
+        <td>${escapeHtml(e.handledBy || "")}</td>
+        <td>${e.balanceAfter}</td>
+        <td class="actions"><button data-remove-log="${e.id}">Undo</button></td>
+      </tr>
+    `).join("");
+  }
+
+  function renderAll() {
+    populateDrugSelects();
+    renderSummary();
+    renderInventory();
+    renderLog();
+  }
+
+  // Add drug
+  document.getElementById("drugForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    data.drugs.push({
+      id: uid(),
+      name: document.getElementById("drugName").value.trim(),
+      dosage: document.getElementById("drugDosage").value.trim(),
+      unitPrice: parseFloat(document.getElementById("drugPrice").value),
+      openingStock: parseInt(document.getElementById("drugOpeningStock").value, 10),
+      reorderLevel: parseInt(document.getElementById("drugReorder").value || "0", 10)
+    });
+    saveData();
+    this.reset();
+    renderAll();
+  });
+
+  // Stock in
+  document.getElementById("stockInForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    const drugId = document.getElementById("inDrug").value;
+    const drug = data.drugs.find(d => d.id === drugId);
+    if (!drug) return;
+    const qty = parseInt(document.getElementById("inQty").value, 10);
+    data.log.push({
+      id: uid(),
+      createdAt: Date.now(),
+      type: "IN",
+      drugId,
+      drugName: drug.name,
+      dosage: drug.dosage,
+      qty,
+      unitPrice: drug.unitPrice,
+      handledBy: document.getElementById("inReceivedBy").value.trim(),
+      date: document.getElementById("inDate").value,
+      balanceAfter: currentStock(drugId) + qty
+    });
+    saveData();
+    this.reset();
+    document.getElementById("inDate").value = todayStr();
+    renderAll();
+  });
+
+  // Stock out / sale
+  document.getElementById("stockOutForm").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    const drugId = document.getElementById("outDrug").value;
+    const drug = data.drugs.find(d => d.id === drugId);
+    if (!drug) return;
+    const qty = parseInt(document.getElementById("outQty").value, 10);
+    const available = currentStock(drugId);
+    if (qty > available) {
+      alert(`Only ${available} unit(s) of ${drug.name} left in stock. Cannot sell ${qty}.`);
+      return;
+    }
+    data.log.push({
+      id: uid(),
+      createdAt: Date.now(),
+      type: "OUT",
+      drugId,
+      drugName: drug.name,
+      dosage: drug.dosage,
+      qty,
+      unitPrice: drug.unitPrice,
+      patient: document.getElementById("outPatient").value.trim(),
+      handledBy: document.getElementById("outDispensedBy").value.trim(),
+      date: document.getElementById("outDate").value,
+      balanceAfter: available - qty
+    });
+    saveData();
+    this.reset();
+    document.getElementById("outDate").value = todayStr();
+    renderAll();
+  });
+
+  document.getElementById("outDrug").addEventListener("change", function () {
+    const drug = data.drugs.find(d => d.id === this.value);
+    const hint = document.getElementById("outStockHint");
+    hint.textContent = drug ? `Available stock: ${currentStock(drug.id)} unit(s) at ${money(drug.unitPrice)} each.` : "";
+  });
+
+  // Remove drug / undo log entry (event delegation)
+  document.addEventListener("click", function (ev) {
+    const rmDrug = ev.target.getAttribute("data-remove-drug");
+    const rmLog = ev.target.getAttribute("data-remove-log");
+    if (rmDrug) {
+      if (!confirm("Remove this drug and its transaction history?")) return;
+      data.drugs = data.drugs.filter(d => d.id !== rmDrug);
+      data.log = data.log.filter(e => e.drugId !== rmDrug);
+      saveData();
+      renderAll();
+    } else if (rmLog) {
+      if (!confirm("Undo this transaction? Stock levels will be recalculated.")) return;
+      data.log = data.log.filter(e => e.id !== rmLog);
+      saveData();
+      renderAll();
+    }
+  });
+
+  document.getElementById("searchBox").addEventListener("input", renderLog);
+  document.getElementById("typeFilter").addEventListener("change", renderLog);
+  document.getElementById("printBtn").addEventListener("click", () => window.print());
+
+  document.getElementById("exportBtn").addEventListener("click", function () {
+    const rows = [["Date", "Type", "Drug", "Dosage", "Qty", "Unit Price", "Total", "Patient", "Handled By", "Balance After"]];
+    [...data.log].sort((a, b) => (a.date < b.date ? -1 : 1)).forEach(e => {
+      rows.push([
+        e.date, e.type === "IN" ? "Stock In" : "Sold Out", e.drugName, e.dosage, e.qty,
+        e.unitPrice, e.qty * e.unitPrice, e.patient || "", e.handledBy || "", e.balanceAfter
+      ]);
+    });
+    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `longlife-pharmacy-log-${todayStr()}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById("inDate").value = todayStr();
+  document.getElementById("outDate").value = todayStr();
+
+  renderAll();
+})();
+</script>
+
+</body>
+</html>
