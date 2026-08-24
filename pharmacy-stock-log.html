@@ -3,82 +3,203 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Longlife Hospital Pharmacy — Stock &amp; Sales Log</title>
-<link rel="stylesheet" href="GMC.CSS">
+<title>Pharmacy Stock Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500;700;800&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --bg: #f3efe4;
+    --surface: #fffdf8;
+    --surface-2: #ece5d3;
+    --ink: #1e2a22;
+    --ink-soft: #5c6459;
+    --ink-faint: #8b9186;
+    --border: #ddd4bc;
+    --accent: #0f6e5c;
+    --accent-ink: #f6fdfa;
+    --accent-soft: #dcece6;
+    --warn: #935a1a;
+    --warn-soft: #f2e1c4;
+    --critical: #a23b34;
+    --critical-soft: #f3ddd8;
+    --shadow: 0 1px 2px rgba(30, 42, 34, .06), 0 4px 14px rgba(30, 42, 34, .06);
+    color-scheme: light;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101713;
+      --surface: #182420;
+      --surface-2: #1f2d27;
+      --ink: #e9e6dc;
+      --ink-soft: #a6ada2;
+      --ink-faint: #6e7469;
+      --border: #2b3a33;
+      --accent: #49c2a1;
+      --accent-ink: #082019;
+      --accent-soft: #1c3a30;
+      --warn: #e3a855;
+      --warn-soft: #3a2c15;
+      --critical: #e28b81;
+      --critical-soft: #3b2320;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 18px rgba(0, 0, 0, .35);
+      color-scheme: dark;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #101713;
+    --surface: #182420;
+    --surface-2: #1f2d27;
+    --ink: #e9e6dc;
+    --ink-soft: #a6ada2;
+    --ink-faint: #6e7469;
+    --border: #2b3a33;
+    --accent: #49c2a1;
+    --accent-ink: #082019;
+    --accent-soft: #1c3a30;
+    --warn: #e3a855;
+    --warn-soft: #3a2c15;
+    --critical: #e28b81;
+    --critical-soft: #3b2320;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 18px rgba(0, 0, 0, .35);
+    color-scheme: dark;
+  }
+
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #f4f6f5; color: #222; }
-  header.page-head {
-    background: #04aa6d; color: #fff; padding: 18px 20px;
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Public Sans", Arial, Helvetica, sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
-  header.page-head h1 { margin: 0; font-size: 22px; }
-  header.page-head p { margin: 4px 0 0; font-size: 13px; opacity: .9; }
-  nav.crumbs { background: #333; padding: 10px 20px; }
-  nav.crumbs a { color: #f2f2f2; text-decoration: none; font-size: 14px; margin-right: 16px; }
-  nav.crumbs a:hover { color: #04aa6d; }
+  a { color: inherit; }
+  ::selection { background: var(--accent-soft); }
 
-  main { max-width: 1150px; margin: 0 auto; padding: 20px; }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
 
-  .summary { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+  header.masthead {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 22px clamp(16px, 4vw, 40px) 20px;
+    border-bottom: 3px solid var(--accent);
+  }
+  .masthead-inner { max-width: 1180px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+  .masthead-title { font-family: "Libre Franklin", sans-serif; font-weight: 800; font-size: clamp(20px, 3vw, 27px); letter-spacing: -0.01em; margin: 0; text-wrap: balance; }
+  .masthead-sub { margin: 4px 0 0; font-size: 13.5px; color: var(--accent-soft); opacity: .85; max-width: 60ch; }
+  .masthead-tag { font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent); border-radius: 999px; padding: 5px 12px; white-space: nowrap; }
+
+  nav.crumbs { background: var(--surface-2); border-bottom: 1px solid var(--border); padding: 0 clamp(16px, 4vw, 40px); }
+  nav.crumbs .crumbs-inner { max-width: 1180px; margin: 0 auto; display: flex; }
+  nav.crumbs a { color: var(--ink-soft); text-decoration: none; font-size: 13px; font-weight: 600; padding: 11px 14px; border-bottom: 2px solid transparent; }
+  nav.crumbs a:hover { color: var(--ink); }
+  nav.crumbs a.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  main { max-width: 1180px; margin: 0 auto; padding: clamp(16px, 3vw, 28px) clamp(16px, 4vw, 40px) 60px; }
+
+  .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 22px; }
   .card {
-    background: #fff; border-radius: 8px; padding: 14px 18px; flex: 1 1 160px;
-    box-shadow: 0 1px 3px rgba(0,0,0,.12); border-left: 4px solid #04aa6d;
+    background: var(--surface); border-radius: 10px; padding: 15px 18px; box-shadow: var(--shadow);
+    border-top: 3px solid var(--accent);
   }
-  .card.warn { border-left-color: #e6a700; }
-  .card.danger { border-left-color: #d9534f; }
-  .card .num { font-size: 26px; font-weight: bold; }
-  .card .label { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: .04em; }
+  .card.warn { border-top-color: var(--warn); }
+  .card.danger { border-top-color: var(--critical); }
+  .card .num { font-family: "IBM Plex Mono", monospace; font-size: 25px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .card .label { font-size: 11.5px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .07em; margin-top: 3px; }
 
-  section { background: #fff; border-radius: 8px; padding: 16px 18px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
-  section h2 { margin-top: 0; font-size: 17px; border-bottom: 2px solid #f0f0f0; padding-bottom: 8px; }
+  section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px 20px; margin-bottom: 18px; box-shadow: var(--shadow); }
+  section h2 {
+    margin: 0 0 4px; font-family: "Libre Franklin", sans-serif; font-weight: 700; font-size: 15.5px;
+    display: flex; align-items: baseline; gap: 9px; color: var(--ink);
+  }
+  section h2 .idx {
+    font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--accent);
+    border: 1px solid var(--accent-soft); background: var(--accent-soft); border-radius: 5px; padding: 2px 6px;
+  }
+  section > small.hint { display: block; color: var(--ink-soft); font-size: 12.5px; margin: 4px 0 14px; }
 
-  form.grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; align-items: end; }
-  form.grid-form label { display: block; font-size: 12px; color: #555; margin-bottom: 3px; }
-  form.grid-form input, form.grid-form select { width: 100%; padding: 7px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
-  form.grid-form button { padding: 8px 14px; background: #04aa6d; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
-  form.grid-form button:hover { background: #038a58; }
-  form.grid-form.out button { background: #d9534f; }
-  form.grid-form.out button:hover { background: #c9302c; }
+  form.grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; align-items: end; }
+  form.grid-form label { display: block; font-size: 11.5px; font-weight: 600; color: var(--ink-soft); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .03em; }
+  form.grid-form input, form.grid-form select {
+    width: 100%; padding: 9px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px;
+    background: var(--surface); color: var(--ink); font-family: inherit;
+  }
+  form.grid-form input::placeholder { color: var(--ink-faint); }
+  form.grid-form button {
+    padding: 10px 16px; background: var(--accent); color: var(--accent-ink); border: none; border-radius: 6px;
+    cursor: pointer; font-size: 13.5px; font-weight: 700; white-space: nowrap; transition: filter .12s ease;
+  }
+  form.grid-form button:hover { filter: brightness(1.08); }
+  form.grid-form.out button { background: var(--critical); color: #fff5f3; }
 
   table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-  th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid #eee; white-space: nowrap; }
-  th { background: #fafafa; position: sticky; top: 0; }
-  tbody tr:hover { background: #f9fdfb; }
-  .table-wrap { overflow-x: auto; max-height: 420px; overflow-y: auto; }
+  th, td { padding: 9px 11px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td.num-col, th.num-col { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; }
+  th { background: var(--surface-2); position: sticky; top: 0; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-soft); font-weight: 600; }
+  tbody tr:hover { background: var(--surface-2); }
+  .table-wrap { overflow-x: auto; max-height: 420px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; }
 
-  .badge { padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; color: #fff; }
-  .badge.in { background: #04aa6d; }
-  .badge.low { background: #e6a700; }
-  .badge.out { background: #d9534f; }
-  .tag { padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
-  .tag.IN { background: #dff5ec; color: #04aa6d; }
-  .tag.OUT { background: #fbe4e2; color: #d9534f; }
+  .badge { padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: .01em; }
+  .badge.in { background: var(--accent-soft); color: var(--accent); }
+  .badge.low { background: var(--warn-soft); color: var(--warn); }
+  .badge.out { background: var(--critical-soft); color: var(--critical); }
+  .tag { padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+  .tag.IN { background: var(--accent-soft); color: var(--accent); }
+  .tag.OUT { background: var(--critical-soft); color: var(--critical); }
 
   .toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; align-items: center; }
-  .toolbar input, .toolbar select { padding: 6px 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
-  .toolbar button { padding: 6px 12px; border: 1px solid #04aa6d; background: #fff; color: #04aa6d; border-radius: 4px; cursor: pointer; font-size: 13px; }
-  .toolbar button:hover { background: #04aa6d; color: #fff; }
+  .toolbar input, .toolbar select {
+    padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;
+    background: var(--surface); color: var(--ink); font-family: inherit;
+  }
+  .toolbar button {
+    padding: 7px 13px; border: 1px solid var(--accent); background: transparent; color: var(--accent);
+    border-radius: 6px; cursor: pointer; font-size: 12.5px; font-weight: 600; transition: background .12s ease, color .12s ease;
+  }
+  .toolbar button:hover { background: var(--accent); color: var(--accent-ink); }
   .toolbar .spacer { flex: 1; }
-  .empty-row td { text-align: center; color: #888; padding: 18px; }
-  small.hint { color: #777; }
-  .actions button { background: none; border: none; color: #d9534f; cursor: pointer; font-size: 12px; text-decoration: underline; }
+  .empty-row td { text-align: center; color: var(--ink-faint); padding: 22px; font-style: italic; }
+  small.hint { color: var(--ink-soft); }
+  #outStockHint { display: block; margin-top: 10px; font-size: 12.5px; }
+  .actions button {
+    background: none; border: none; color: var(--critical); cursor: pointer; font-size: 12px;
+    text-decoration: underline; font-family: inherit; padding: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
 
   @media print {
-    nav.crumbs, .toolbar, form.grid-form, .actions { display: none !important; }
-    section { box-shadow: none; }
+    header.masthead, nav.crumbs, .toolbar, form.grid-form, .actions { display: none !important; }
+    body { background: #fff; }
+    section { box-shadow: none; border: 1px solid #ccc; }
   }
 </style>
 </head>
 <body>
 
-<header class="page-head">
-  <h1>Longlife Hospital Pharmacy</h1>
-  <p>Stock &amp; Sales Log Book — track drugs in stock, drugs sold out, dispensers and patients</p>
+<header class="masthead">
+  <div class="masthead-inner">
+    <div>
+      <h1 class="masthead-title">Longlife Hospital Pharmacy</h1>
+      <p class="masthead-sub">Stock &amp; sales ledger — what's in stock, what's sold out, who dispensed it and to whom</p>
+    </div>
+    <span class="masthead-tag">Live Log Book</span>
+  </div>
 </header>
 <nav class="crumbs">
-  <a href="GMC.HTML">HOME</a>
-  <a href="index.html">SITE</a>
-  <a href="pharmacy-stock-log.html" class="active">PHARMACY LOG</a>
+  <div class="crumbs-inner">
+    <a href="GMC.HTML">Home</a>
+    <a href="index.html">Site</a>
+    <a href="pharmacy-stock-log.html" class="active">Pharmacy Log</a>
+  </div>
 </nav>
 
 <main>
@@ -86,27 +207,27 @@
   <div class="summary" id="summaryCards"></div>
 
   <section>
-    <h2>1. Drug Inventory</h2>
+    <h2><span class="idx">01</span> Drug Inventory</h2>
     <small class="hint">Add every drug the pharmacy stocks. Stock level updates automatically from the transaction log below.</small>
-    <form class="grid-form" id="drugForm" style="margin-top:12px;">
+    <form class="grid-form" id="drugForm">
       <div>
-        <label>Drug Name</label>
+        <label for="drugName">Drug Name</label>
         <input type="text" id="drugName" placeholder="e.g. Paracetamol" required>
       </div>
       <div>
-        <label>Dosage / Strength</label>
+        <label for="drugDosage">Dosage / Strength</label>
         <input type="text" id="drugDosage" placeholder="e.g. 500mg tablet" required>
       </div>
       <div>
-        <label>Unit Price (₦)</label>
+        <label for="drugPrice">Unit Price (₦)</label>
         <input type="number" id="drugPrice" min="0" step="0.01" required>
       </div>
       <div>
-        <label>Opening Stock (qty)</label>
+        <label for="drugOpeningStock">Opening Stock (qty)</label>
         <input type="number" id="drugOpeningStock" min="0" step="1" value="0" required>
       </div>
       <div>
-        <label>Reorder Level</label>
+        <label for="drugReorder">Reorder Level</label>
         <input type="number" id="drugReorder" min="0" step="1" value="10">
       </div>
       <div><button type="submit">+ Add Drug</button></div>
@@ -115,7 +236,7 @@
     <div class="table-wrap" style="margin-top:14px;">
       <table>
         <thead>
-          <tr><th>Drug</th><th>Dosage</th><th>Unit Price</th><th>Current Stock</th><th>Status</th><th></th></tr>
+          <tr><th>Drug</th><th>Dosage</th><th class="num-col">Unit Price</th><th class="num-col">Current Stock</th><th>Status</th><th></th></tr>
         </thead>
         <tbody id="inventoryBody"></tbody>
       </table>
@@ -123,22 +244,22 @@
   </section>
 
   <section>
-    <h2>2. Record Stock In (drug received)</h2>
+    <h2><span class="idx">02</span> Record Stock In <span style="font-weight:500; color:var(--ink-soft); font-size:13px;">— drug received</span></h2>
     <form class="grid-form" id="stockInForm">
       <div>
-        <label>Drug</label>
+        <label for="inDrug">Drug</label>
         <select id="inDrug" required></select>
       </div>
       <div>
-        <label>Quantity Received</label>
+        <label for="inQty">Quantity Received</label>
         <input type="number" id="inQty" min="1" step="1" required>
       </div>
       <div>
-        <label>Received By</label>
+        <label for="inReceivedBy">Received By</label>
         <input type="text" id="inReceivedBy" placeholder="Staff name" required>
       </div>
       <div>
-        <label>Date</label>
+        <label for="inDate">Date</label>
         <input type="date" id="inDate" required>
       </div>
       <div><button type="submit">+ Add Stock</button></div>
@@ -146,26 +267,26 @@
   </section>
 
   <section>
-    <h2>3. Record Sale (drug dispensed / sold out)</h2>
+    <h2><span class="idx">03</span> Record Sale <span style="font-weight:500; color:var(--ink-soft); font-size:13px;">— drug dispensed / sold out</span></h2>
     <form class="grid-form out" id="stockOutForm">
       <div>
-        <label>Drug</label>
+        <label for="outDrug">Drug</label>
         <select id="outDrug" required></select>
       </div>
       <div>
-        <label>Quantity Sold</label>
+        <label for="outQty">Quantity Sold</label>
         <input type="number" id="outQty" min="1" step="1" required>
       </div>
       <div>
-        <label>Patient Name</label>
+        <label for="outPatient">Patient Name</label>
         <input type="text" id="outPatient" placeholder="Patient name" required>
       </div>
       <div>
-        <label>Dispensed By</label>
+        <label for="outDispensedBy">Dispensed By</label>
         <input type="text" id="outDispensedBy" placeholder="Staff who took it out" required>
       </div>
       <div>
-        <label>Date</label>
+        <label for="outDate">Date</label>
         <input type="date" id="outDate" required>
       </div>
       <div><button type="submit">Record Sale</button></div>
@@ -174,7 +295,7 @@
   </section>
 
   <section>
-    <h2>4. Transaction Log Book</h2>
+    <h2><span class="idx">04</span> Transaction Ledger</h2>
     <div class="toolbar">
       <input type="text" id="searchBox" placeholder="Search drug, patient or staff...">
       <select id="typeFilter">
@@ -190,8 +311,8 @@
       <table>
         <thead>
           <tr>
-            <th>Date</th><th>Type</th><th>Drug</th><th>Dosage</th><th>Qty</th>
-            <th>Unit Price</th><th>Total</th><th>Patient</th><th>Handled By</th><th>Balance After</th><th></th>
+            <th>Date</th><th>Type</th><th>Drug</th><th>Dosage</th><th class="num-col">Qty</th>
+            <th class="num-col">Unit Price</th><th class="num-col">Total</th><th>Patient</th><th>Handled By</th><th class="num-col">Balance After</th><th></th>
           </tr>
         </thead>
         <tbody id="logBody"></tbody>
@@ -277,8 +398,8 @@
       return `<tr>
         <td>${escapeHtml(d.name)}</td>
         <td>${escapeHtml(d.dosage)}</td>
-        <td>${money(d.unitPrice)}</td>
-        <td>${stock}</td>
+        <td class="num-col">${money(d.unitPrice)}</td>
+        <td class="num-col">${stock}</td>
         <td><span class="badge ${st.cls}">${st.label}</span></td>
         <td class="actions"><button data-remove-drug="${d.id}">Remove</button></td>
       </tr>`;
@@ -312,12 +433,12 @@
         <td><span class="tag ${e.type}">${e.type === "IN" ? "Stock In" : "Sold Out"}</span></td>
         <td>${escapeHtml(e.drugName)}</td>
         <td>${escapeHtml(e.dosage)}</td>
-        <td>${e.qty}</td>
-        <td>${money(e.unitPrice)}</td>
-        <td>${money(e.qty * e.unitPrice)}</td>
+        <td class="num-col">${e.qty}</td>
+        <td class="num-col">${money(e.unitPrice)}</td>
+        <td class="num-col">${money(e.qty * e.unitPrice)}</td>
         <td>${e.type === "OUT" ? escapeHtml(e.patient || "") : "—"}</td>
         <td>${escapeHtml(e.handledBy || "")}</td>
-        <td>${e.balanceAfter}</td>
+        <td class="num-col">${e.balanceAfter}</td>
         <td class="actions"><button data-remove-log="${e.id}">Undo</button></td>
       </tr>
     `).join("");
