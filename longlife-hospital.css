@@ -114,6 +114,9 @@
 
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
+
+/* a class rule with a display would otherwise outrank the attribute's default */
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; }
 
 body {
@@ -419,6 +422,24 @@ table.data td.num, table.data th.num {
 
 .quote-sheet .quote-head { text-align: center; }
 .quote-sheet table.data th { position: static; }
+
+/* running total that follows the patient down a narrow screen */
+.quote-bar { display: none; }
+@media (max-width: 900px) {
+  .quote-bar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px clamp(14px, 4vw, 20px);
+    padding-bottom: calc(11px + env(safe-area-inset-bottom, 0px));
+    background: var(--ink); color: var(--bg);
+    box-shadow: 0 -6px 22px rgba(0, 0, 0, .22);
+  }
+  .quote-bar .qb-text { display: flex; flex-direction: column; line-height: 1.25; flex: 1; min-width: 0; }
+  .quote-bar .qb-count { font-size: 11px; opacity: .7; }
+  .quote-bar .qb-total { font-size: 18px; font-weight: 700; }
+  /* keep the footer clear of the fixed bar */
+  .site-foot { padding-bottom: 84px; }
+}
 
 /* ---------- auth ---------- */
 

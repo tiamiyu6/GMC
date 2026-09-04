@@ -408,6 +408,16 @@
       </div>
     </section>
 
+    <!-- narrow screens put the estimate far below the picker, so the running
+         total follows the patient down the page -->
+    <div class="quote-bar no-print" id="quoteBar" hidden>
+      <span class="qb-text">
+        <span class="qb-count mono"></span>
+        <span class="qb-total mono"></span>
+      </span>
+      <button class="btn sm" data-action="quote-jump">See estimate</button>
+    </div>
+
     ${siteFooter()}`;
   }
 
@@ -464,6 +474,14 @@
           Estimate only — valid 14 days. Final charges depend on the doctor's assessment.
         </p>`
       : `<div class="empty" style="padding:26px 10px;">Pick a service or medicine on the left and it will appear here.</div>`}`;
+
+    const bar = document.getElementById("quoteBar");
+    if (bar) {
+      const n = priced.lines.length;
+      bar.hidden = n === 0;
+      bar.querySelector(".qb-count").textContent = n + (n === 1 ? " item" : " items");
+      bar.querySelector(".qb-total").textContent = money(priced.total);
+    }
   }
 
   function quoteText() {
@@ -2106,6 +2124,11 @@
       case "add-charge": openModal("add-charge", { patientId: el.getAttribute("data-patient") || "" }); break;
 
       case "quote-print": window.print(); break;
+      case "quote-jump": {
+        const sheet = document.getElementById("quoteSheet");
+        if (sheet) sheet.scrollIntoView({ behavior: "smooth", block: "start" });
+        break;
+      }
       case "quote-clear": {
         state.quote = {};
         state.quoteNo = null;
