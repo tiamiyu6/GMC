@@ -716,7 +716,7 @@
                     <td class="num">${v.pulse || "—"}</td>
                     <td class="num">${v.weight ? v.weight + "kg" : "—"}</td>
                     <td>${esc(v.takenBy)}</td>
-                    <td style="white-space:normal;">${esc(v.note || "—")}</td>
+                    <td style="white-space:normal; min-width:220px;">${esc(v.note || "—")}</td>
                   </tr>`).join("")}</tbody>
                 </table>
               </div>` : `<div class="empty">No vitals recorded.</div>`}
