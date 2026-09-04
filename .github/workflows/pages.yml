@@ -2,7 +2,9 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    # main is the intended source. The feature branch is listed so the site can
+    # go live before the pull request is merged — remove it once it is merged.
+    branches: [main, claude/pharmacy-stock-log-09atdt]
   workflow_dispatch:
 
 # allow the workflow to publish to Pages
