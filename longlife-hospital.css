@@ -384,6 +384,42 @@ table.data td.num, table.data th.num {
   font-size: 12.5px; color: var(--ink-soft); max-width: 70ch;
 }
 
+/* ---------- patient quote ---------- */
+
+.site-nav .links a.on { color: var(--brand); background: var(--brand-soft); }
+
+.quote-layout {
+  display: grid; grid-template-columns: 1.25fr .9fr; gap: clamp(18px, 3vw, 32px); align-items: start;
+}
+@media (max-width: 900px) { .quote-layout { grid-template-columns: 1fr; } }
+
+.quote-side { position: sticky; top: 84px; }
+@media (max-width: 900px) { .quote-side { position: static; } }
+
+.quote-row {
+  display: grid; grid-template-columns: auto 1fr 74px auto; gap: 12px; align-items: center;
+  padding: 10px 12px; border: 1px solid var(--line); border-radius: 9px; cursor: pointer;
+  background: var(--surface); transition: border-color .13s ease, background .13s ease;
+}
+.quote-row:hover { border-color: var(--brand); }
+.quote-row.on { border-color: var(--brand); background: var(--brand-soft); }
+.quote-row input[type="checkbox"] { width: 17px; height: 17px; accent-color: var(--brand); cursor: pointer; flex: none; }
+.quote-row .q-name { font-size: 13.8px; font-weight: 600; min-width: 0; }
+.quote-row .q-qty input {
+  width: 100%; padding: 5px 7px; border: 1px solid var(--line); border-radius: 6px;
+  background: var(--surface); color: var(--ink); font-size: 13px; text-align: center;
+  font-family: "IBM Plex Mono", monospace;
+}
+.quote-row .q-qty input:disabled { opacity: .4; }
+.quote-row .q-price { font-size: 13px; font-weight: 600; white-space: nowrap; }
+@media (max-width: 460px) {
+  .quote-row { grid-template-columns: auto 1fr auto; row-gap: 8px; }
+  .quote-row .q-qty { grid-column: 2 / 4; justify-self: start; width: 74px; }
+}
+
+.quote-sheet .quote-head { text-align: center; }
+.quote-sheet table.data th { position: static; }
+
 /* ---------- auth ---------- */
 
 .auth-wrap {
@@ -618,6 +654,14 @@ table.data td.num, table.data th.num {
   width: 62%; max-width: 34px; background: var(--brand); border-radius: 4px 4px 0 0; min-height: 2px;
 }
 .chart-col .lbl { font-family: "IBM Plex Mono", monospace; font-size: 10px; color: var(--ink-faint); }
+
+/* paired in/out columns for the finance chart */
+.chart-col .pair-bars { display: flex; align-items: flex-end; gap: 3px; height: 100%; width: 100%; justify-content: center; }
+.chart-col .pair-bars .fill { width: 12px; max-width: 12px; }
+.chart-col .fill.out { background: var(--crit); }
+.key-swatch { width: 11px; height: 11px; border-radius: 3px; background: var(--brand); display: inline-block; }
+.key-swatch.out { background: var(--crit); }
+
 .chart-tip {
   position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
   background: var(--ink); color: var(--bg); padding: 5px 9px; border-radius: 6px;
@@ -700,6 +744,12 @@ table.data td.num, table.data th.num {
 @media print {
   .app-side, .app-top, .app-mobile-nav, .site-nav, .site-foot, .toast-stack,
   .no-print, .btn, .modal-foot { display: none !important; }
+
+  /* printing an estimate prints the sheet, not the whole picker */
+  .quote-layout > .stack, .quote-layout .section-head { display: none !important; }
+  .quote-layout { display: block !important; padding: 0 !important; }
+  .quote-side { position: static !important; }
+  .quote-sheet { border: 0 !important; box-shadow: none !important; }
   body { background: #fff; }
   .modal-backdrop { position: static; background: none; padding: 0; display: block; }
   .modal { box-shadow: none; border: 0; max-width: none; }

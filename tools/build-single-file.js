@@ -13,7 +13,7 @@ const out = process.argv[2] || path.join(repo, "longlife-hospital.bundle.html");
 
 const read = (f) => fs.readFileSync(path.join(repo, f), "utf8");
 
-let html = read("longlife-hospital.html");
+let html = read("index.html");
 
 html = html.replace(
   '<link rel="stylesheet" href="longlife-hospital.css">',
@@ -27,7 +27,7 @@ html = html.replace(
 
 for (const leftover of ["longlife-hospital.css", "longlife-data.js", "longlife-app.js"]) {
   if (html.includes('href="' + leftover + '"') || html.includes('src="' + leftover + '"')) {
-    console.error("Failed to inline " + leftover + " — the tag in longlife-hospital.html changed.");
+    console.error("Failed to inline " + leftover + " — the tag in index.html changed.");
     process.exit(1);
   }
 }

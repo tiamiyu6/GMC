@@ -67,23 +67,27 @@ const LL = (function () {
     doctor: {
       label: "Doctor",
       blurb: "Consult, review history, write prescriptions",
-      perms: ["dashboard", "patients", "patient.create", "patient.view", "prescriptions", "prescription.create", "vitals", "pharmacy.view", "reports"]
+      perms: ["dashboard", "patients", "patient.create", "patient.view", "prescriptions", "prescription.create",
+        "vitals", "charge.create", "pharmacy.view", "reports"]
     },
     nurse: {
       label: "Nurse",
       blurb: "Register patients, issue cards, record vitals",
-      perms: ["dashboard", "patients", "patient.create", "patient.view", "vitals", "vitals.create", "prescriptions", "reports"]
+      perms: ["dashboard", "patients", "patient.create", "patient.view", "vitals", "vitals.create",
+        "charge.create", "prescriptions", "reports"]
     },
     pharmacist: {
       label: "Pharmacist",
       blurb: "Dispense prescriptions, manage drug stock",
-      perms: ["dashboard", "patients", "patient.view", "prescriptions", "pharmacy", "pharmacy.view", "pharmacy.dispense", "pharmacy.stock", "reports"]
+      perms: ["dashboard", "patients", "patient.view", "prescriptions", "pharmacy", "pharmacy.view",
+        "pharmacy.dispense", "pharmacy.stock", "reports"]
     },
     admin: {
       label: "Admin",
-      blurb: "Full oversight, staff and audit trail",
+      blurb: "Finance, records, staff and the audit trail",
       perms: ["dashboard", "patients", "patient.create", "patient.view", "prescriptions", "prescription.create", "vitals", "vitals.create",
-        "pharmacy", "pharmacy.view", "pharmacy.dispense", "pharmacy.stock", "reports", "staff", "audit"]
+        "pharmacy", "pharmacy.view", "pharmacy.dispense", "pharmacy.stock", "reports", "staff", "audit",
+        "finance", "payment.create", "expense.create", "charge.create"]
     }
   };
 
@@ -127,6 +131,45 @@ const LL = (function () {
       { id: "p_2", cardNo: "LLH-26-0002", name: "Mary Sunday", sex: "Female", age: 27, phone: "0812-770-6654", address: "5 Owoseni Street, Oshodi", bloodGroup: "A+", nextOfKin: "Peter Sunday · 0812-770-6600", cardType: "Antenatal", cardFee: 3500, createdAt: stampOffset(60 * 24 * 12), createdBy: "Nurse Adaeze Okonkwo", createdById: "u_nur1", expiresAt: dayOffset(353), status: "Active" },
       { id: "p_3", cardNo: "LLH-26-0003", name: "Tunde Bello", sex: "Male", age: 52, phone: "0705-118-9034", address: "38 Bolade Avenue, Oshodi", bloodGroup: "B+", nextOfKin: "Bisi Bello · 0705-118-9000", cardType: "Standard", cardFee: 2000, createdAt: stampOffset(60 * 24 * 4), createdBy: "Nurse Adaeze Okonkwo", createdById: "u_nur1", expiresAt: dayOffset(361), status: "Active" },
       { id: "p_4", cardNo: "LLH-26-0004", name: "Blessing Eze", sex: "Female", age: 8, phone: "0902-334-7781", address: "77 Church Street, Isolo", bloodGroup: "O-", nextOfKin: "Ngozi Eze · 0902-334-7700", cardType: "Child", cardFee: 1500, createdAt: stampOffset(180), createdBy: "Nurse Adaeze Okonkwo", createdById: "u_nur1", expiresAt: dayOffset(365), status: "Active" }
+    ];
+
+    // Service price list. These are the prices the quote page and service
+    // charges are calculated from — set them to the hospital's real tariff.
+    const services = [
+      { id: "s_consult", name: "General consultation", category: "Clinic", price: 3000 },
+      { id: "s_review", name: "Follow-up review", category: "Clinic", price: 2000 },
+      { id: "s_anc", name: "Antenatal visit", category: "Maternity", price: 5000 },
+      { id: "s_delivery", name: "Normal delivery", category: "Maternity", price: 80000 },
+      { id: "s_mp", name: "Malaria parasite test", category: "Laboratory", price: 2500 },
+      { id: "s_fbc", name: "Full blood count", category: "Laboratory", price: 6000 },
+      { id: "s_widal", name: "Widal test", category: "Laboratory", price: 3500 },
+      { id: "s_urine", name: "Urinalysis", category: "Laboratory", price: 3000 },
+      { id: "s_scan_ab", name: "Abdominal scan", category: "Scan", price: 12000 },
+      { id: "s_scan_ob", name: "Obstetric scan", category: "Scan", price: 10000 },
+      { id: "s_dressing", name: "Wound dressing", category: "Procedures", price: 4000 },
+      { id: "s_minor", name: "Minor surgery", category: "Surgery", price: 60000 },
+      { id: "s_admit", name: "Admission, per night", category: "Ward", price: 15000 },
+      { id: "s_emergency", name: "Emergency attendance", category: "Emergency", price: 7500 }
+    ];
+
+    const charges = [
+      { id: "c_1", patientId: "p_1", serviceId: "s_consult", name: "General consultation", amount: 3000, at: stampOffset(160), staffId: "u_nur1", staffName: "Nurse Adaeze Okonkwo" },
+      { id: "c_2", patientId: "p_1", serviceId: "s_mp", name: "Malaria parasite test", amount: 2500, at: stampOffset(155), staffId: "u_nur1", staffName: "Nurse Adaeze Okonkwo" },
+      { id: "c_3", patientId: "p_2", serviceId: "s_anc", name: "Antenatal visit", amount: 5000, at: stampOffset(60 * 24 * 2), staffId: "u_nur1", staffName: "Nurse Adaeze Okonkwo" },
+      { id: "c_4", patientId: "p_4", serviceId: "s_emergency", name: "Emergency attendance", amount: 7500, at: stampOffset(185), staffId: "u_nur1", staffName: "Nurse Adaeze Okonkwo" }
+    ];
+
+    const payments = [
+      { id: "pay_1", patientId: "p_1", patientName: "John Okafor", amount: 9000, method: "Cash", forWhat: "Consultation, lab and drugs", at: stampOffset(130), staffId: "u_adm1", staffName: "Tunde Ajayi", ref: "RCT-0001" },
+      { id: "pay_2", patientId: "p_2", patientName: "Mary Sunday", amount: 12000, method: "Transfer", forWhat: "Antenatal visit and supplements", at: stampOffset(60 * 24 * 2), staffId: "u_adm1", staffName: "Tunde Ajayi", ref: "RCT-0002" },
+      { id: "pay_3", patientId: "p_4", patientName: "Blessing Eze", amount: 5000, method: "POS", forWhat: "Part payment", at: stampOffset(70), staffId: "u_adm1", staffName: "Tunde Ajayi", ref: "RCT-0003" }
+    ];
+
+    const expenses = [
+      { id: "e_1", category: "Drug purchase", description: "Paracetamol 500mg ×100 from supplier", amount: 11000, date: dayOffset(-9), at: stampOffset(60 * 24 * 9), staffId: "u_adm1", staffName: "Tunde Ajayi" },
+      { id: "e_2", category: "Drug purchase", description: "Amoxicillin 250mg ×40 from supplier", amount: 9600, date: dayOffset(-6), at: stampOffset(60 * 24 * 6), staffId: "u_adm1", staffName: "Tunde Ajayi" },
+      { id: "e_3", category: "Utilities", description: "Diesel for generator", amount: 45000, date: dayOffset(-3), at: stampOffset(60 * 24 * 3), staffId: "u_adm1", staffName: "Tunde Ajayi" },
+      { id: "e_4", category: "Salaries", description: "Locum nurse, weekend cover", amount: 30000, date: dayOffset(-2), at: stampOffset(60 * 24 * 2), staffId: "u_adm1", staffName: "Tunde Ajayi" }
     ];
 
     const vitals = [
@@ -178,7 +221,11 @@ const LL = (function () {
       { id: "a_3", at: stampOffset(180), userId: "u_nur1", userName: "Nurse Adaeze Okonkwo", role: "nurse", action: "Issued patient card", detail: "Blessing Eze — LLH-26-0004 (₦1,500.00)" }
     ];
 
-    return { users, drugs, patients, vitals, prescriptions, movements, activity, cardCounter: 4 };
+    return {
+      users, drugs, services, patients, vitals, prescriptions, movements,
+      charges, payments, expenses, activity,
+      cardCounter: 4, receiptCounter: 3
+    };
   }
 
   /* ---------- store ---------- */
@@ -191,11 +238,16 @@ const LL = (function () {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         db = JSON.parse(raw);
-        // forward-compatible defaults
-        ["users", "drugs", "patients", "vitals", "prescriptions", "movements", "activity"].forEach(k => {
+        // forward-compatible defaults: a store saved by an older version is
+        // topped up rather than thrown away
+        const fresh = seed();
+        ["users", "drugs", "patients", "vitals", "prescriptions", "movements",
+          "charges", "payments", "expenses", "activity"].forEach(k => {
           if (!Array.isArray(db[k])) db[k] = [];
         });
+        if (!Array.isArray(db.services) || !db.services.length) db.services = fresh.services;
         if (typeof db.cardCounter !== "number") db.cardCounter = db.patients.length;
+        if (typeof db.receiptCounter !== "number") db.receiptCounter = db.payments.length;
         return db;
       }
     } catch (e) { /* corrupt or unavailable storage — fall back to a fresh seed */ }
@@ -277,11 +329,26 @@ const LL = (function () {
       .sort((a, b) => (a.at < b.at ? 1 : -1));
   }
 
+  function chargesFor(patientId) {
+    return load().charges.filter(c => c.patientId === patientId).sort((a, b) => (a.at < b.at ? 1 : -1));
+  }
+
+  function paymentsFor(patientId) {
+    return load().payments.filter(p => p.patientId === patientId).sort((a, b) => (a.at < b.at ? 1 : -1));
+  }
+
+  /**
+   * A patient's account: what they have been billed (card fee + services +
+   * drugs), what they have paid, and what is still owed.
+   */
   function patientSpend(patientId) {
     const p = patientById(patientId);
     const drugs = dispensesFor(patientId).reduce((n, m) => n + m.qty * m.unitPrice, 0);
     const card = Number(p && p.cardFee) || 0;
-    return { drugs, card, total: drugs + card };
+    const services = chargesFor(patientId).reduce((n, c) => n + Number(c.amount || 0), 0);
+    const billed = drugs + card + services;
+    const paid = paymentsFor(patientId).reduce((n, x) => n + Number(x.amount || 0), 0);
+    return { drugs, card, services, billed, paid, outstanding: billed - paid, total: billed };
   }
 
   function prescriptionsFor(patientId) {
@@ -345,6 +412,65 @@ const LL = (function () {
         .filter(m => m.type === "OUT" && m.date === iso)
         .reduce((n, m) => n + m.qty * m.unitPrice, 0);
       out.push({ date: iso, label: d.toLocaleDateString("en-NG", { weekday: "short" }), total });
+    }
+    return out;
+  }
+
+  /**
+   * Facility finances. "Billed" is everything charged to patients; "received"
+   * is money actually taken. They are deliberately separate so the two are
+   * never double counted.
+   */
+  function finance() {
+    const d = load();
+    const today = todayISO();
+    const drugsBilled = d.movements.filter(m => m.type === "OUT")
+      .reduce((n, m) => n + m.qty * m.unitPrice, 0);
+    const cardsBilled = d.patients.reduce((n, p) => n + (Number(p.cardFee) || 0), 0);
+    const servicesBilled = d.charges.reduce((n, c) => n + Number(c.amount || 0), 0);
+    const billed = drugsBilled + cardsBilled + servicesBilled;
+
+    const received = d.payments.reduce((n, p) => n + Number(p.amount || 0), 0);
+    const receivedToday = d.payments.filter(p => String(p.at).slice(0, 10) === today)
+      .reduce((n, p) => n + Number(p.amount || 0), 0);
+
+    const spent = d.expenses.reduce((n, e) => n + Number(e.amount || 0), 0);
+
+    const byMethod = {};
+    d.payments.forEach(p => { byMethod[p.method] = (byMethod[p.method] || 0) + Number(p.amount || 0); });
+
+    const byCategory = {};
+    d.expenses.forEach(e => { byCategory[e.category] = (byCategory[e.category] || 0) + Number(e.amount || 0); });
+
+    const debtors = d.patients
+      .map(p => ({ patient: p, ...patientSpend(p.id) }))
+      .filter(x => x.outstanding > 0)
+      .sort((a, b) => b.outstanding - a.outstanding);
+
+    return {
+      drugsBilled, cardsBilled, servicesBilled, billed,
+      received, receivedToday, outstanding: billed - received,
+      spent, net: received - spent,
+      byMethod, byCategory, debtors
+    };
+  }
+
+  /** Money in and out per day, for the finance chart. */
+  function cashByDay(days) {
+    const d = load();
+    const out = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const dt = new Date();
+      dt.setDate(dt.getDate() - i);
+      const iso = dt.toISOString().slice(0, 10);
+      out.push({
+        date: iso,
+        label: dt.toLocaleDateString("en-NG", { weekday: "short" }),
+        received: d.payments.filter(p => String(p.at).slice(0, 10) === iso)
+          .reduce((n, p) => n + Number(p.amount || 0), 0),
+        spent: d.expenses.filter(e => (e.date || String(e.at).slice(0, 10)) === iso)
+          .reduce((n, e) => n + Number(e.amount || 0), 0)
+      });
     }
     return out;
   }
@@ -555,6 +681,79 @@ const LL = (function () {
     return v;
   }
 
+  function serviceById(id) { return load().services.find(s => s.id === id) || null; }
+
+  function addCharge(input, user) {
+    const d = load();
+    const patient = patientById(input.patientId);
+    const service = serviceById(input.serviceId);
+    if (!patient || !service) return { ok: false };
+    const amount = input.amount === "" || input.amount == null ? service.price : Number(input.amount);
+    const charge = {
+      id: uid("c"), patientId: patient.id, serviceId: service.id, name: service.name,
+      amount: Number(amount) || 0, at: nowISO(),
+      staffId: user ? user.id : null, staffName: user ? user.name : "Unknown"
+    };
+    d.charges.unshift(charge);
+    logActivity(user, "Billed a service", `${patient.name} — ${service.name} (${money(charge.amount)})`);
+    save();
+    return { ok: true, charge };
+  }
+
+  function nextReceiptNo() {
+    const d = load();
+    d.receiptCounter = (Number(d.receiptCounter) || 0) + 1;
+    return "RCT-" + String(d.receiptCounter).padStart(4, "0");
+  }
+
+  function recordPayment(input, user) {
+    const d = load();
+    const patient = patientById(input.patientId);
+    const amount = Number(input.amount) || 0;
+    if (!patient || amount <= 0) return { ok: false };
+    const payment = {
+      id: uid("pay"), patientId: patient.id, patientName: patient.name,
+      amount, method: input.method || "Cash", forWhat: input.forWhat || "",
+      at: nowISO(), staffId: user ? user.id : null, staffName: user ? user.name : "Unknown",
+      ref: nextReceiptNo()
+    };
+    d.payments.unshift(payment);
+    logActivity(user, "Received payment", `${patient.name} — ${money(amount)} by ${payment.method} (${payment.ref})`);
+    save();
+    return { ok: true, payment };
+  }
+
+  function addExpense(input, user) {
+    const d = load();
+    const amount = Number(input.amount) || 0;
+    if (amount <= 0 || !input.description) return { ok: false };
+    const expense = {
+      id: uid("e"), category: input.category || "Other", description: input.description,
+      amount, date: input.date || todayISO(), at: nowISO(),
+      staffId: user ? user.id : null, staffName: user ? user.name : "Unknown"
+    };
+    d.expenses.unshift(expense);
+    logActivity(user, "Recorded expense", `${expense.category} — ${expense.description} (${money(amount)})`);
+    save();
+    return { ok: true, expense };
+  }
+
+  /** Price a patient quote from the service list and drug catalogue. */
+  function priceQuote(items) {
+    const lines = items.map(i => {
+      const src = i.kind === "drug" ? drugById(i.refId) : serviceById(i.refId);
+      if (!src) return null;
+      const unitPrice = Number(src.price != null ? src.price : src.unitPrice) || 0;
+      const qty = Math.max(1, Number(i.qty) || 1);
+      return {
+        kind: i.kind,
+        name: i.kind === "drug" ? `${src.name} ${src.dosage} ${src.form}` : src.name,
+        qty, unitPrice, total: qty * unitPrice
+      };
+    }).filter(Boolean);
+    return { lines, total: lines.reduce((n, l) => n + l.total, 0) };
+  }
+
   function csvOf(rows) {
     return rows.map(r => r.map(v => `"${String(v == null ? "" : v).replace(/"/g, '""')}"`).join(",")).join("\n");
   }
@@ -564,11 +763,13 @@ const LL = (function () {
     uid, todayISO, nowISO, daysBetween, money, moneyShort, fmtDate, fmtDateTime, initials, esc, csvOf,
     data, load, save, reset, seed,
     login, logout, currentUser, can,
-    stockOf, drugStatus, patientById, drugById, userById,
+    stockOf, drugStatus, patientById, drugById, userById, serviceById,
     dispensesFor, patientSpend, prescriptionsFor, vitalsFor, pendingPrescriptions,
+    chargesFor, paymentsFor, finance, cashByDay, priceQuote,
     alerts, suggestedOrder, revenueByDay, totals,
     createPatient, createPrescription, dispensePrescription, dispenseDirect,
-    receiveStock, addDrug, recordVitals, logActivity
+    receiveStock, addDrug, recordVitals, logActivity,
+    addCharge, recordPayment, addExpense
   };
 })();
 
