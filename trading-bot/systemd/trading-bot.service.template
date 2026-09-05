@@ -1,0 +1,15 @@
+[Unit]
+Description=Paper trading bot (simulated money only)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__USER__
+WorkingDirectory=__WORKDIR__
+ExecStart=__PYTHON__ __WORKDIR__/bot.py --loop
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

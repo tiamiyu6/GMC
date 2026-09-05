@@ -1,0 +1,14 @@
+[Unit]
+Description=Dashboard for the paper trading bot (read-only, localhost only)
+After=network-online.target
+
+[Service]
+Type=simple
+User=__USER__
+WorkingDirectory=__WORKDIR__
+ExecStart=__PYTHON__ __WORKDIR__/dashboard.py --host 127.0.0.1 --port 8000
+Restart=on-failure
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target

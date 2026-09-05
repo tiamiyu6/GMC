@@ -75,6 +75,35 @@ ssh -L 8000:127.0.0.1:8000 you@your-vps
 ```
 then open `http://127.0.0.1:8000` on your own laptop.
 
+### Run it automatically (systemd, so you don't have to babysit terminals)
+
+On a Linux VPS/server, install both as system services that start on boot
+and restart themselves if they crash:
+
+```bash
+sudo ./install_service.sh
+```
+
+It detects the venv in this folder (if you made one), installs
+`trading-bot.service` and `trading-bot-dashboard.service`, and starts both.
+
+Check on them any time:
+
+```bash
+systemctl status trading-bot.service
+systemctl status trading-bot-dashboard.service
+journalctl -u trading-bot.service -f   # live logs, Ctrl+C to stop watching
+```
+
+Remove them later with:
+
+```bash
+sudo ./uninstall_service.sh
+```
+
+This leaves `state.json` and `trade_log.csv` untouched — only the services
+are removed, your trade history stays.
+
 ## Configuration
 
 Edit `config.py`:
