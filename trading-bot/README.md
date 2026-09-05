@@ -54,6 +54,27 @@ without losing the simulated position. Every trade is appended to
 `trade_log.csv` — open it in a spreadsheet to see exactly what the bot did
 and why.
 
+### Watch it from a browser instead of the terminal
+
+Run this in a second terminal alongside the bot:
+
+```bash
+python3 dashboard.py
+```
+
+Then open `http://127.0.0.1:8000` — it shows current portfolio value,
+P/L%, cash, position, a chart of value over time, and a trade table, and
+refreshes itself every 10 seconds. It's read-only (just reads `state.json`
+and `trade_log.csv`) and only listens on localhost by default. If it's
+running on a remote VPS, use SSH port forwarding rather than exposing it
+publicly — it has no login, so anyone who could reach the port would see
+your balance and trades:
+
+```bash
+ssh -L 8000:127.0.0.1:8000 you@your-vps
+```
+then open `http://127.0.0.1:8000` on your own laptop.
+
 ## Configuration
 
 Edit `config.py`:
