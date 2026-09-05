@@ -27,6 +27,24 @@ money" for a car — read this section before running anything.
 
 ## Setup
 
+**On Windows:** install [Python 3.10+](https://www.python.org/downloads/)
+(check "Add python.exe to PATH" during install) and
+[Git](https://git-scm.com/download/win), then in PowerShell or Command
+Prompt:
+
+```
+git clone -b claude/buying-car-qpwryt https://github.com/tiamiyu6/GMC.git
+cd GMC\trading-bot
+```
+
+Then just double-click `run_windows.bat` (or run it from the terminal) —
+it creates a virtual environment, installs dependencies, starts the bot
+and dashboard each in their own window, and opens the dashboard in your
+browser automatically. See "Running on Windows" below for making it
+start automatically when you log in.
+
+**On macOS/Linux:**
+
 ```bash
 cd trading-bot
 python3 -m venv venv && source venv/bin/activate
@@ -103,6 +121,27 @@ sudo ./uninstall_service.sh
 
 This leaves `state.json` and `trade_log.csv` untouched — only the services
 are removed, your trade history stays.
+
+### Running on Windows
+
+`run_windows.bat` (double-click it, or run from a terminal) handles setup
+and launches the bot and dashboard, each in its own console window, and
+opens `http://127.0.0.1:8000` in your browser. Closing a window (or
+Ctrl+C inside it) stops that piece.
+
+To make it start automatically when you log in to Windows, so you don't
+have to remember to double-click it:
+
+1. Open **Task Scheduler** (search for it in the Start menu).
+2. **Create Task…** → give it a name like "Trading Bot".
+3. Under **Triggers**, add: *At log on*.
+4. Under **Actions**, add: *Start a program*, and browse to
+   `run_windows.bat` inside your `trading-bot` folder.
+5. Save. It'll now launch both windows automatically next time you log in.
+
+Your PC has to actually be on and logged in for the bot to run — it's not
+a substitute for a VPS if you want it running while your PC is off or
+asleep.
 
 ## Configuration
 
