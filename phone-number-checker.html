@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nigeria Phone Number Checker</title>
+<meta name="description" content="Validate Nigerian phone numbers, normalise them to local and international format, and identify the network operator from the prefix. Runs entirely in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16231c; --ink-soft:#4b5b52; --paper:#f6f8f5; --card:#ffffff;
+    --line:#dbe4dc; --brand:#0f7a4c; --brand-ink:#ffffff; --accent:#e8f4ec;
+    --bad:#b4231f; --bad-bg:#fbe9e8; --warn:#8a5a00; --warn-bg:#fbf1dc;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Public Sans',Arial,sans-serif; line-height:1.5;
+  }
+  header{
+    background:var(--brand); color:var(--brand-ink); padding:28px 20px;
+  }
+  header .wrap{max-width:920px; margin:0 auto;}
+  header h1{
+    font-family:'Archivo',Arial,sans-serif; font-size:1.6rem; margin:0 0 6px;
+  }
+  header p{margin:0; opacity:.92; max-width:60ch;}
+  main{max-width:920px; margin:0 auto; padding:24px 20px 60px;}
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:20px; margin-bottom:20px;
+  }
+  .card h2{font-family:'Archivo',Arial,sans-serif; font-size:1.05rem; margin:0 0 14px;}
+  .notice{
+    background:var(--accent); border:1px solid #bfe0cc; border-radius:10px;
+    padding:12px 14px; font-size:.92rem; color:#0d4d31; margin-bottom:20px;
+  }
+  label{display:block; font-weight:600; font-size:.88rem; margin-bottom:6px;}
+  input[type=text], textarea{
+    width:100%; font:1rem/1.4 var(--mono); padding:10px 12px;
+    border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink);
+  }
+  textarea{min-height:120px; resize:vertical;}
+  .row{display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; margin-bottom:4px;}
+  .row > div{flex:1; min-width:220px;}
+  button{
+    font:600 .92rem 'Public Sans',sans-serif; padding:10px 18px; border-radius:8px;
+    border:1px solid var(--brand); background:var(--brand); color:#fff; cursor:pointer;
+  }
+  button.ghost{background:#fff; color:var(--brand);}
+  button:hover{opacity:.9}
+  .result{margin-top:16px; display:none;}
+  .result.show{display:block;}
+  .result .status{
+    display:inline-flex; align-items:center; gap:8px; font-weight:700;
+    padding:6px 12px; border-radius:999px; font-size:.85rem; margin-bottom:12px;
+  }
+  .status.ok{background:var(--accent); color:#0d4d31;}
+  .status.bad{background:var(--bad-bg); color:var(--bad);}
+  dl{display:grid; grid-template-columns:auto 1fr; gap:8px 16px; margin:0;}
+  dt{color:var(--ink-soft); font-size:.85rem; align-self:center;}
+  dd{margin:0; font-family:var(--mono); font-size:.95rem;}
+  table{width:100%; border-collapse:collapse; margin-top:14px; font-size:.9rem;}
+  th, td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line);}
+  th{color:var(--ink-soft); font-weight:600; font-size:.78rem; text-transform:uppercase; letter-spacing:.03em;}
+  td.mono{font-family:var(--mono);}
+  .tag{padding:2px 9px; border-radius:999px; font-size:.78rem; font-weight:700;}
+  .tag.ok{background:var(--accent); color:#0d4d31;}
+  .tag.bad{background:var(--bad-bg); color:var(--bad);}
+  .tag.unknown{background:var(--warn-bg); color:var(--warn);}
+  .op-mtn{color:#b8860b} .op-glo{color:#1a7a1a} .op-airtel{color:#c0122f} .op-9mobile{color:#008751} .op-other{color:var(--ink-soft)}
+  footer{max-width:920px; margin:0 auto; padding:0 20px 40px; color:var(--ink-soft); font-size:.85rem;}
+  .actions{display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;}
+  .hint{font-size:.82rem; color:var(--ink-soft); margin-top:6px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>Nigeria Phone Number Checker</h1>
+    <p>Validates a Nigerian phone number's format and identifies the network operator
+       it was originally allocated to. Everything runs locally in your browser —
+       no number is sent anywhere.</p>
+  </div>
+</header>
+
+<main>
+  <div class="notice">
+    <strong>What this does and doesn't do:</strong> it checks whether a number matches
+    a valid Nigerian format and looks up which operator its prefix was assigned to by
+    the NCC. It cannot and does not show a number's location, call history, or online
+    status — that data belongs to telecom carriers and isn't available through any
+    public tool. Because of mobile number portability, the operator shown is the
+    <em>original</em> allocation and the number may since have moved to another network.
+  </div>
+
+  <div class="card">
+    <h2>Check a single number</h2>
+    <div class="row">
+      <div>
+        <label for="single-input">Phone number</label>
+        <input type="text" id="single-input" placeholder="e.g. 08031234567, +234 803 123 4567, 234-803-123-4567">
+        <p class="hint">Spaces, dashes and brackets are ignored automatically.</p>
+      </div>
+      <button id="single-check">Check number</button>
+    </div>
+
+    <div class="result" id="single-result">
+      <span class="status" id="single-status"></span>
+      <dl id="single-details"></dl>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Check a list</h2>
+    <label for="bulk-input">One number per line</label>
+    <textarea id="bulk-input" placeholder="08031234567&#10;+2348051234567&#10;07091234567"></textarea>
+    <div class="actions">
+      <button id="bulk-check">Check list</button>
+      <button class="ghost" id="bulk-export" disabled>Export results as CSV</button>
+    </div>
+    <div id="bulk-result"></div>
+  </div>
+</main>
+
+<footer>
+  Operator prefix data reflects the NCC's original block allocations to MTN, Globacom,
+  Airtel and 9mobile. It is general public reference information, not a live lookup —
+  treat unrecognised prefixes as "not one of the major four networks" rather than invalid.
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  // NCC prefix allocations (4-digit local prefix, leading 0), original allocation.
+  // Public reference data — not a live carrier lookup.
+  var PREFIXES = {
+    mtn:    ["0703","0704","0706","0803","0806","0810","0813","0814","0816","0903","0906","0913","0916"],
+    glo:    ["0705","0805","0807","0811","0815","0905","0915"],
+    airtel: ["0701","0708","0802","0808","0812","0901","0902","0904","0907","0911","0912"],
+    "9mobile": ["0809","0817","0818","0908","0909"]
+  };
+  var OPERATOR_LABEL = { mtn:"MTN", glo:"Globacom (Glo)", airtel:"Airtel", "9mobile":"9mobile" };
+
+  var PREFIX_TO_OP = {};
+  Object.keys(PREFIXES).forEach(function(op){
+    PREFIXES[op].forEach(function(p){ PREFIX_TO_OP[p] = op; });
+  });
+
+  function clean(raw){
+    return String(raw || "").replace(/[\s\-().]/g, "");
+  }
+
+  function parseNumber(raw){
+    var digits = clean(raw);
+    var hadPlus = digits.charAt(0) === "+";
+    if (hadPlus) digits = digits.slice(1);
+
+    if (!/^\d+$/.test(digits)) {
+      return { valid:false, reason:"Contains characters other than digits, spaces, +, - or brackets." };
+    }
+
+    var local; // 11-digit form starting with 0
+
+    if (digits.length === 11 && digits.charAt(0) === "0") {
+      local = digits;
+    } else if (digits.length === 13 && digits.slice(0,3) === "234") {
+      local = "0" + digits.slice(3);
+    } else if (digits.length === 10 && !hadPlus) {
+      // 10 digits with no leading 0 and no 234 — ambiguous, reject rather than guess.
+      return { valid:false, reason:"10 digits with no country code or leading 0 — add a leading 0 (11 digits) or +234 (13 digits) so the format is unambiguous." };
+    } else {
+      return { valid:false, reason:"Wrong length for a Nigerian number (expected 11 digits starting with 0, or +234 followed by 10 digits)." };
+    }
+
+    if (local.length !== 11) {
+      return { valid:false, reason:"Wrong length after normalising — expected 11 digits." };
+    }
+
+    var prefix = local.slice(0,4);
+    var op = PREFIX_TO_OP[prefix] || null;
+
+    return {
+      valid: true,
+      local: local,
+      e164: "+234" + local.slice(1),
+      prefix: prefix,
+      operator: op,
+      operatorLabel: op ? OPERATOR_LABEL[op] : "Unrecognised prefix"
+    };
+  }
+
+  function renderSingle(raw){
+    var result = parseNumber(raw);
+    var box = document.getElementById("single-result");
+    var status = document.getElementById("single-status");
+    var details = document.getElementById("single-details");
+    box.classList.add("show");
+    details.innerHTML = "";
+
+    if (!result.valid) {
+      status.className = "status bad";
+      status.textContent = "Invalid";
+      details.innerHTML = "<dt>Reason</dt><dd>" + escapeHtml(result.reason) + "</dd>";
+      return;
+    }
+
+    status.className = "status ok";
+    status.textContent = "Valid Nigerian number";
+
+    var opClass = result.operator ? "op-" + result.operator : "op-other";
+    details.innerHTML =
+      "<dt>Local format</dt><dd>" + result.local + "</dd>" +
+      "<dt>International (E.164)</dt><dd>" + result.e164 + "</dd>" +
+      "<dt>Prefix</dt><dd>" + result.prefix + "</dd>" +
+      "<dt>Original network</dt><dd class='" + opClass + "'>" + escapeHtml(result.operatorLabel) + "</dd>";
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  var lastBulkRows = null;
+
+  function renderBulk(text){
+    var lines = text.split("\n").map(function(l){ return l.trim(); }).filter(Boolean);
+    var target = document.getElementById("bulk-result");
+    var exportBtn = document.getElementById("bulk-export");
+
+    if (!lines.length) {
+      target.innerHTML = "";
+      exportBtn.disabled = true;
+      lastBulkRows = null;
+      return;
+    }
+
+    var rows = lines.map(function(line){
+      var r = parseNumber(line);
+      return {
+        input: line,
+        valid: r.valid,
+        local: r.valid ? r.local : "",
+        e164: r.valid ? r.e164 : "",
+        operator: r.valid ? r.operatorLabel : "",
+        reason: r.valid ? "" : r.reason
+      };
+    });
+    lastBulkRows = rows;
+    exportBtn.disabled = false;
+
+    var validCount = rows.filter(function(r){ return r.valid; }).length;
+
+    var html = "<p class='hint'>" + validCount + " of " + rows.length + " valid.</p>";
+    html += "<table><thead><tr><th>Input</th><th>Local</th><th>International</th><th>Network</th><th>Status</th></tr></thead><tbody>";
+    rows.forEach(function(r){
+      html += "<tr>";
+      html += "<td class='mono'>" + escapeHtml(r.input) + "</td>";
+      html += "<td class='mono'>" + escapeHtml(r.local) + "</td>";
+      html += "<td class='mono'>" + escapeHtml(r.e164) + "</td>";
+      html += "<td>" + escapeHtml(r.operator) + "</td>";
+      html += "<td>" + (r.valid
+        ? "<span class='tag ok'>valid</span>"
+        : "<span class='tag bad'>" + escapeHtml(r.reason) + "</span>") + "</td>";
+      html += "</tr>";
+    });
+    html += "</tbody></table>";
+    target.innerHTML = html;
+  }
+
+  function exportCsv(){
+    if (!lastBulkRows) return;
+    var header = ["input","local","e164","operator","valid","reason"];
+    var lines = [header.join(",")];
+    lastBulkRows.forEach(function(r){
+      var row = [r.input, r.local, r.e164, r.operator, r.valid ? "yes" : "no", r.reason];
+      lines.push(row.map(function(v){
+        v = String(v || "");
+        return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+      }).join(","));
+    });
+    var blob = new Blob([lines.join("\n")], { type:"text/csv" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "nigeria-phone-check-results.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  document.getElementById("single-check").addEventListener("click", function(){
+    renderSingle(document.getElementById("single-input").value);
+  });
+  document.getElementById("single-input").addEventListener("keydown", function(e){
+    if (e.key === "Enter") renderSingle(this.value);
+  });
+  document.getElementById("bulk-check").addEventListener("click", function(){
+    renderBulk(document.getElementById("bulk-input").value);
+  });
+  document.getElementById("bulk-export").addEventListener("click", exportCsv);
+})();
+</script>
+
+</body>
+</html>

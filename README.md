@@ -15,6 +15,7 @@ from the `main` branch.
 | `longlife-data.js` | Store, models, role permissions, seed data, derived queries |
 | `longlife-app.js` | Hash router, views, modals, command palette |
 | `tools/build-single-file.js` | Inlines everything into one HTML file for hosting elsewhere |
+| `phone-number-checker.html` | Standalone Nigerian phone number validator and network lookup (see below) |
 | `accessnet-investment-proposal.html` | Unrelated earlier document, kept for reference |
 
 ## The public site
@@ -53,6 +54,26 @@ Every demonstration account uses the PIN `1234`.
 Auto card and receipt numbers, expired-batch and insufficient-stock dispensing guards,
 low-stock and expiry alerts, a generated reorder list, an audit trail of every action,
 a command palette (<kbd>Ctrl</kbd>+<kbd>K</kbd>) and CSV export throughout.
+
+## Nigeria phone number checker
+
+`phone-number-checker.html` is a separate, self-contained tool — unrelated to the
+hospital app, open it directly in a browser. Given a Nigerian phone number (any of
+the common formats: `0803...`, `+234 803...`, `234-803-123-4567`, etc.) it:
+
+- validates the format and normalises it to local (`0803...`) and international
+  (`+234803...`) form
+- looks up which operator (MTN, Glo, Airtel, 9mobile) the number's prefix was
+  originally allocated to by the NCC
+- supports checking a pasted list of numbers at once and exporting the results as CSV
+
+Everything runs client-side in the browser; no number is ever sent anywhere. It only
+identifies format and original network from public NCC prefix allocations — it does
+**not** and cannot show a number's location, call history, or online status. That
+data is held exclusively by telecom carriers under lawful-intercept rules, and a
+tool that tried to expose it for arbitrary numbers would be stalkerware, not a
+utility. Note also that because of mobile number portability, the operator shown is
+the number's original allocation and it may since have moved to another network.
 
 ## Setting your own prices
 
