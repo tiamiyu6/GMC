@@ -161,6 +161,10 @@
     var hadPlus = digits.charAt(0) === "+";
     if (hadPlus) digits = digits.slice(1);
 
+    if (!digits.length) {
+      return { valid:false, reason:"Enter a phone number to check." };
+    }
+
     if (!/^\d+$/.test(digits)) {
       return { valid:false, reason:"Contains characters other than digits, spaces, +, - or brackets." };
     }
