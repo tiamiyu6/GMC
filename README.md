@@ -16,6 +16,7 @@ from the `main` branch.
 | `longlife-app.js` | Hash router, views, modals, command palette |
 | `tools/build-single-file.js` | Inlines everything into one HTML file for hosting elsewhere |
 | `phone-number-checker.html` | Standalone Nigerian phone number validator and network lookup (see below) |
+| `location-share.html` | Standalone consent-based live location sharing (see below) |
 | `accessnet-investment-proposal.html` | Unrelated earlier document, kept for reference |
 
 ## The public site
@@ -74,6 +75,38 @@ data is held exclusively by telecom carriers under lawful-intercept rules, and a
 tool that tried to expose it for arbitrary numbers would be stalkerware, not a
 utility. Note also that because of mobile number portability, the operator shown is
 the number's original allocation and it may since have moved to another network.
+
+## Consent-based location sharing
+
+`location-share.html` is another separate, self-contained tool — open it directly in
+a browser, unrelated to the hospital app or the phone checker. It lets one person
+request another person's live location, but **only with that person's explicit,
+in-the-moment consent**:
+
+1. The requester opens the page, optionally labels the request (e.g. "so I can find
+   you at the market"), and gets a link. They send that link themselves — the tool
+   has no messaging integration and can't contact anyone on its own.
+2. The other person opens the link and sees exactly who's asking and why, with two
+   buttons: **Share my location** or **Decline**. Nothing is sent until they tap Share.
+3. If they share, their browser's native geolocation prompt fires, and their position
+   updates live on the requester's page for as long as they keep that tab open. A
+   **Stop sharing** button is always visible, and closing the tab stops it too.
+
+There is no way to look up a phone number's location without the number's owner
+personally opening the link and agreeing — that's a deliberate limit, not a
+missing feature.
+
+**Backend:** a handful of Postgres functions in the `naija_location_share` migration
+of the `naija-location-share`-labelled tables in the existing Supabase project
+(table `naija_location_requests`). The table has Row Level Security enabled with
+*no* policies — direct table access is blocked entirely for every role — so the
+only way in is through five narrow `SECURITY DEFINER` functions
+(`naija_location_create_request`, `naija_location_get`, `naija_location_update`,
+`naija_location_decline`, `naija_location_stop`), each scoped to a single request id.
+Rows older than 24 hours are deleted automatically the next time a request is
+created, so nothing accumulates indefinitely. This is fully isolated from every
+other table in that Supabase project — nothing about the ISP platform's own schema
+was modified to add it.
 
 ## Setting your own prices
 
