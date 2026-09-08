@@ -1,10 +1,10 @@
 /* ==========================================================================
-   Longlife Hospital — Care System data layer
+   Longlife Hospital care system data layer
    Store, models, role permissions, seed data and derived queries.
 
    NOTE ON SECURITY: this is a browser-only demonstration system. All data
    lives in this browser's localStorage and the "login" is a front-desk role
-   switch, not real authentication — PINs are stored in plain text and any
+   switch rather than real authentication. PINs are stored in plain text and any
    user of this browser can read or change the data. Do not put real patient
    records in it without a proper server, database and authentication.
    ========================================================================== */
@@ -27,26 +27,32 @@ const LL = (function () {
     return Math.round((a - b) / 86400000);
   }
 
+  /* Money always reads sign first, then the naira mark, so a negative net
+     position shows as -₦69,600.00 rather than ₦-69600. */
   function money(n) {
-    return "₦" + Number(n || 0).toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const v = Number(n) || 0;
+    const sign = v < 0 ? "-" : "";
+    return sign + "₦" + Math.abs(v).toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   function moneyShort(n) {
-    const v = Number(n || 0);
-    if (v >= 1000000) return "₦" + (v / 1000000).toFixed(1) + "m";
-    if (v >= 1000) return "₦" + (v / 1000).toFixed(v >= 10000 ? 0 : 1) + "k";
-    return "₦" + v.toFixed(0);
+    const v = Number(n) || 0;
+    const sign = v < 0 ? "-" : "";
+    const a = Math.abs(v);
+    if (a >= 1000000) return sign + "₦" + (a / 1000000).toFixed(1) + "m";
+    if (a >= 1000) return sign + "₦" + (a / 1000).toFixed(a >= 10000 ? 0 : 1) + "k";
+    return sign + "₦" + a.toFixed(0);
   }
 
   function fmtDate(iso) {
-    if (!iso) return "—";
+    if (!iso) return "";
     const d = new Date(iso.length === 10 ? iso + "T00:00:00" : iso);
     if (isNaN(d)) return iso;
     return d.toLocaleDateString("en-NG", { day: "2-digit", month: "short", year: "numeric" });
   }
 
   function fmtDateTime(iso) {
-    if (!iso) return "—";
+    if (!iso) return "";
     const d = new Date(iso);
     if (isNaN(d)) return iso;
     return d.toLocaleString("en-NG", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
@@ -127,14 +133,14 @@ const LL = (function () {
     ];
 
     const patients = [
-      { id: "p_1", cardNo: "LLH-26-0001", name: "John Okafor", sex: "Male", age: 34, phone: "0803-441-2210", address: "12 Ilupeju Street, Oshodi", bloodGroup: "O+", nextOfKin: "Chioma Okafor · 0803-441-2299", cardType: "Standard", cardFee: 2000, createdAt: stampOffset(60 * 24 * 26), createdBy: "Nurse Adaeze Okonkwo", createdById: "u_nur1", expiresAt: dayOffset(339), status: "Active" },
-      { id: "p_2", cardNo: "LLH-26-0002", name: "Mary Sunday", sex: "Female", age: 27, phone: "0812-770-6654", address: "5 Owoseni Street, Oshodi", bloodGroup: "A+", nextOfKin: "Peter Sunday · 0812-770-6600", cardType: "Antenatal", cardFee: 3500, createdAt: stampOffset(60 * 24 * 12), createdBy: "Nurse Adaeze Okonkwo", createdById: "u_nur1", expiresAt: dayOffset(353), status: "Active" },
-      { id: "p_3", cardNo: "LLH-26-0003", name: "Tunde Bello", sex: "Male", age: 52, phone: "0705-118-9034", address: "38 Bolade Avenue, Oshodi", bloodGroup: "B+", nextOfKin: "Bisi Bello · 0705-118-9000", cardType: "Standard", cardFee: 2000, createdAt: stampOffset(60 * 24 * 4), createdBy: "Nurse Adaeze Okonkwo", createdById: "u_nur1", expiresAt: dayOffset(361), status: "Active" },
-      { id: "p_4", cardNo: "LLH-26-0004", name: "Blessing Eze", sex: "Female", age: 8, phone: "0902-334-7781", address: "77 Church Street, Isolo", bloodGroup: "O-", nextOfKin: "Ngozi Eze · 0902-334-7700", cardType: "Child", cardFee: 1500, createdAt: stampOffset(180), createdBy: "Nurse Adaeze Okonkwo", createdById: "u_nur1", expiresAt: dayOffset(365), status: "Active" }
+      { id: "p_1", cardNo: "LLH-26-0001", name: "John Okafor", sex: "Male", age: 34, phone: "0803-441-2210", address: "12 Ilupeju Street, Oshodi", bloodGroup: "O+", nextOfKin: "Chioma Okafor, 0803-441-2299", cardType: "Standard", cardFee: 2000, createdAt: stampOffset(60 * 24 * 26), createdBy: "Nurse Adaeze Okonkwo", createdById: "u_nur1", expiresAt: dayOffset(339), status: "Active" },
+      { id: "p_2", cardNo: "LLH-26-0002", name: "Mary Sunday", sex: "Female", age: 27, phone: "0812-770-6654", address: "5 Owoseni Street, Oshodi", bloodGroup: "A+", nextOfKin: "Peter Sunday, 0812-770-6600", cardType: "Antenatal", cardFee: 3500, createdAt: stampOffset(60 * 24 * 12), createdBy: "Nurse Adaeze Okonkwo", createdById: "u_nur1", expiresAt: dayOffset(353), status: "Active" },
+      { id: "p_3", cardNo: "LLH-26-0003", name: "Tunde Bello", sex: "Male", age: 52, phone: "0705-118-9034", address: "38 Bolade Avenue, Oshodi", bloodGroup: "B+", nextOfKin: "Bisi Bello, 0705-118-9000", cardType: "Standard", cardFee: 2000, createdAt: stampOffset(60 * 24 * 4), createdBy: "Nurse Adaeze Okonkwo", createdById: "u_nur1", expiresAt: dayOffset(361), status: "Active" },
+      { id: "p_4", cardNo: "LLH-26-0004", name: "Blessing Eze", sex: "Female", age: 8, phone: "0902-334-7781", address: "77 Church Street, Isolo", bloodGroup: "O-", nextOfKin: "Ngozi Eze, 0902-334-7700", cardType: "Child", cardFee: 1500, createdAt: stampOffset(180), createdBy: "Nurse Adaeze Okonkwo", createdById: "u_nur1", expiresAt: dayOffset(365), status: "Active" }
     ];
 
     // Service price list. These are the prices the quote page and service
-    // charges are calculated from — set them to the hospital's real tariff.
+    // charges are calculated from. Set them to the hospital's real tariff.
     const services = [
       { id: "s_consult", name: "General consultation", category: "Clinic", price: 3000 },
       { id: "s_review", name: "Follow-up review", category: "Clinic", price: 2000 },
@@ -216,9 +222,9 @@ const LL = (function () {
     ];
 
     const activity = [
-      { id: "a_1", at: stampOffset(135), userId: "u_pha1", userName: "Pharm. Grace Bello", role: "pharmacist", action: "Dispensed prescription", detail: "RX for John Okafor (LLH-26-0001) — 2 item(s)" },
-      { id: "a_2", at: stampOffset(140), userId: "u_doc1", userName: "Dr. Ifeoluwa Adeyemi", role: "doctor", action: "Wrote prescription", detail: "John Okafor — Malaria (uncomplicated)" },
-      { id: "a_3", at: stampOffset(180), userId: "u_nur1", userName: "Nurse Adaeze Okonkwo", role: "nurse", action: "Issued patient card", detail: "Blessing Eze — LLH-26-0004 (₦1,500.00)" }
+      { id: "a_1", at: stampOffset(135), userId: "u_pha1", userName: "Pharm. Grace Bello", role: "pharmacist", action: "Dispensed prescription", detail: "Prescription for John Okafor (LLH-26-0001), 2 items" },
+      { id: "a_2", at: stampOffset(140), userId: "u_doc1", userName: "Dr. Ifeoluwa Adeyemi", role: "doctor", action: "Wrote prescription", detail: "John Okafor, malaria (uncomplicated)" },
+      { id: "a_3", at: stampOffset(180), userId: "u_nur1", userName: "Nurse Adaeze Okonkwo", role: "nurse", action: "Issued patient card", detail: "Blessing Eze, LLH-26-0004 (₦1,500.00)" }
     ];
 
     return {
@@ -250,7 +256,7 @@ const LL = (function () {
         if (typeof db.receiptCounter !== "number") db.receiptCounter = db.payments.length;
         return db;
       }
-    } catch (e) { /* corrupt or unavailable storage — fall back to a fresh seed */ }
+    } catch (e) { /* corrupt or unavailable storage, so fall back to a fresh seed */ }
     db = seed();
     save();
     return db;
@@ -259,7 +265,7 @@ const LL = (function () {
   function save() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-    } catch (e) { /* storage full or blocked — the session continues in memory */ }
+    } catch (e) { /* storage full or blocked, so the session continues in memory */ }
   }
 
   function reset() {
@@ -374,13 +380,13 @@ const LL = (function () {
     load().drugs.forEach(d => {
       const st = drugStatus(d);
       if (st.key === "expired") {
-        out.push({ level: "crit", title: `${d.name} ${d.dosage} has expired`, detail: `Batch ${d.batch} expired ${fmtDate(d.expiry)} — quarantine ${st.stock} unit(s).`, drugId: d.id });
+        out.push({ level: "crit", title: `${d.name} ${d.dosage} has expired`, detail: `Batch ${d.batch} expired ${fmtDate(d.expiry)}. Quarantine ${st.stock} unit(s).`, drugId: d.id });
       } else if (st.key === "out") {
         out.push({ level: "crit", title: `${d.name} ${d.dosage} is out of stock`, detail: "Dispensing is blocked until stock is received.", drugId: d.id });
       } else if (st.key === "low") {
-        out.push({ level: "warn", title: `${d.name} ${d.dosage} is low`, detail: `${st.stock} left, reorder level ${d.reorderLevel}. Suggested order: ${suggestedOrder(d)} unit(s).`, drugId: d.id });
+        out.push({ level: "warn", title: `${d.name} ${d.dosage} is low`, detail: `${st.stock} left against a reorder level of ${d.reorderLevel}. Suggested order ${suggestedOrder(d)} unit(s).`, drugId: d.id });
       } else if (st.key === "expiring") {
-        out.push({ level: "warn", title: `${d.name} ${d.dosage} expires in ${st.expiryDays} day(s)`, detail: `Batch ${d.batch} — use or return ${st.stock} unit(s) before ${fmtDate(d.expiry)}.`, drugId: d.id });
+        out.push({ level: "warn", title: `${d.name} ${d.dosage} expires in ${st.expiryDays} day(s)`, detail: `Batch ${d.batch}. Use or return ${st.stock} unit(s) before ${fmtDate(d.expiry)}.`, drugId: d.id });
       }
     });
     const pending = pendingPrescriptions().length;
@@ -389,7 +395,7 @@ const LL = (function () {
     }
     load().patients.forEach(p => {
       if (p.expiresAt && daysBetween(p.expiresAt, todayISO()) < 0) {
-        out.push({ level: "warn", title: `${p.name}'s card has expired`, detail: `Card ${p.cardNo} expired ${fmtDate(p.expiresAt)} — renew at the front desk.`, patientId: p.id });
+        out.push({ level: "warn", title: `${p.name}'s card has expired`, detail: `Card ${p.cardNo} expired ${fmtDate(p.expiresAt)}. Renew it at the front desk.`, patientId: p.id });
       }
     });
     const order = { crit: 0, warn: 1, good: 2 };
@@ -540,7 +546,7 @@ const LL = (function () {
       status: "Active"
     };
     d.patients.unshift(patient);
-    logActivity(user, "Issued patient card", `${patient.name} — ${cardNo} (${money(patient.cardFee)})`);
+    logActivity(user, "Issued patient card", `${patient.name}, ${cardNo} (${money(patient.cardFee)})`);
     save();
     return patient;
   }
@@ -559,7 +565,7 @@ const LL = (function () {
       items: input.items.map(i => ({ drugId: i.drugId, qty: Number(i.qty) || 0, instruction: i.instruction || "" }))
     };
     d.prescriptions.unshift(rx);
-    logActivity(user, "Wrote prescription", `${patient ? patient.name : "Patient"} — ${rx.diagnosis || rx.items.length + " item(s)"}`);
+    logActivity(user, "Wrote prescription", `${patient ? patient.name : "Patient"}, ${rx.diagnosis || rx.items.length + " item(s)"}`);
     save();
     return rx;
   }
@@ -603,12 +609,12 @@ const LL = (function () {
     rx.dispensedAt = now;
     rx.dispensedBy = user ? user.name : "Unknown";
     rx.total = total;
-    logActivity(user, "Dispensed prescription", `${patient ? patient.name : "Patient"} (${patient ? patient.cardNo : "—"}) — ${rx.items.length} item(s), ${money(total)}`);
+    logActivity(user, "Dispensed prescription", `${patient ? patient.name : "Patient"} (${patient ? patient.cardNo : ""}), ${rx.items.length} item(s), ${money(total)}`);
     save();
     return { ok: true, total, rx };
   }
 
-  /** Counter sale — dispense straight to a patient card without a prescription. */
+  /** Counter sale: dispense straight to a patient card without a prescription. */
   function dispenseDirect(input, user) {
     const d = load();
     const drug = drugById(input.drugId);
@@ -626,7 +632,7 @@ const LL = (function () {
       staffName: user ? user.name : "Unknown",
       patientId: patient.id, patientName: patient.name, note: input.note || "Counter sale"
     });
-    logActivity(user, "Dispensed at counter", `${patient.name} — ${drug.name} ${drug.dosage} ×${qty} (${money(qty * drug.unitPrice)})`);
+    logActivity(user, "Dispensed at counter", `${patient.name}, ${drug.name} ${drug.dosage} ×${qty} (${money(qty * drug.unitPrice)})`);
     save();
     return { ok: true, total: qty * drug.unitPrice };
   }
@@ -662,7 +668,7 @@ const LL = (function () {
       batch: input.batch || ""
     };
     d.drugs.push(drug);
-    logActivity(user, "Added drug to catalogue", `${drug.name} ${drug.dosage} — ${money(drug.unitPrice)}/unit`);
+    logActivity(user, "Added drug to catalogue", `${drug.name} ${drug.dosage} at ${money(drug.unitPrice)} per unit`);
     save();
     return drug;
   }
@@ -676,7 +682,7 @@ const LL = (function () {
       takenBy: user ? user.name : "Unknown", at: nowISO(), note: input.note || ""
     };
     d.vitals.unshift(v);
-    logActivity(user, "Recorded vitals", `${patient ? patient.name : "Patient"} — BP ${v.bp}, ${v.temp}°C`);
+    logActivity(user, "Recorded vitals", `${patient ? patient.name : "Patient"}, BP ${v.bp}, ${v.temp}°C`);
     save();
     return v;
   }
@@ -695,7 +701,7 @@ const LL = (function () {
       staffId: user ? user.id : null, staffName: user ? user.name : "Unknown"
     };
     d.charges.unshift(charge);
-    logActivity(user, "Billed a service", `${patient.name} — ${service.name} (${money(charge.amount)})`);
+    logActivity(user, "Billed a service", `${patient.name}, ${service.name} (${money(charge.amount)})`);
     save();
     return { ok: true, charge };
   }
@@ -718,7 +724,7 @@ const LL = (function () {
       ref: nextReceiptNo()
     };
     d.payments.unshift(payment);
-    logActivity(user, "Received payment", `${patient.name} — ${money(amount)} by ${payment.method} (${payment.ref})`);
+    logActivity(user, "Received payment", `${patient.name}, ${money(amount)} by ${payment.method} (${payment.ref})`);
     save();
     return { ok: true, payment };
   }
@@ -733,7 +739,7 @@ const LL = (function () {
       staffId: user ? user.id : null, staffName: user ? user.name : "Unknown"
     };
     d.expenses.unshift(expense);
-    logActivity(user, "Recorded expense", `${expense.category} — ${expense.description} (${money(amount)})`);
+    logActivity(user, "Recorded expense", `${expense.category}, ${expense.description} (${money(amount)})`);
     save();
     return { ok: true, expense };
   }

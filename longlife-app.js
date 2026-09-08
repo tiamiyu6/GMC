@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Longlife Hospital — Care System UI
+   Longlife Hospital care system interface
    Hash router, role-aware views, modals, command palette and toasts.
    Depends on longlife-data.js (global `LL`).
    ========================================================================== */
@@ -125,7 +125,7 @@
     email: "longlifehospital97@gmail.com",
     established: "5 January 2005",
     facilityCode: "24/18/1/2/2/0021",
-    registration: "Primary Health Care Centre — Nigeria Ministry of Health"
+    registration: "Primary Health Care Centre, Nigeria Ministry of Health"
   };
 
   const SERVICES = [
@@ -144,7 +144,7 @@
       <div class="inner">
         <a class="brandmark" href="#/home">
           <span class="glyph">LL</span>
-          <span class="word">Longlife Hospital<small>Oshodi · Lagos · Est. 2005</small></span>
+          <span class="word">Longlife Hospital<small>Oshodi Lagos, est. 2005</small></span>
         </a>
         <nav class="links">
           ${page === "home"
@@ -154,7 +154,7 @@
             : `<a href="#/home" class="hide-sm">Home</a>`}
           <a href="#/quote" class="${page === "quote" ? "on" : ""}">Get an estimate</a>
           ${user
-            ? `<a class="btn sm" href="#/app/dashboard">Portal · ${esc(user.name.split(" ")[0])}</a>`
+            ? `<a class="btn sm" href="#/app/dashboard">Staff portal</a>`
             : `<a class="btn sm" href="#/login">Staff login</a>`}
         </nav>
       </div>
@@ -165,47 +165,58 @@
     return `
     <footer class="site-foot">
       <div class="inner">
-        <span>© ${new Date().getFullYear()} ${esc(HOSPITAL.name)} · ${esc(HOSPITAL.address)}</span>
-        <span class="mono" style="font-size:11.5px;">Demonstration system · data stored in this browser only</span>
+        <span>© ${new Date().getFullYear()} ${esc(HOSPITAL.name)}, ${esc(HOSPITAL.address)}</span>
+        <span class="mono" style="font-size:11.5px;">Demonstration system, data stored in this browser only</span>
       </div>
     </footer>`;
   }
 
   function viewHome(user) {
     const t = LL.totals();
+    const years = new Date().getFullYear() - 2005;
     return `
     ${siteNav(user, "home")}
 
     <section class="hero">
       <div class="inner">
-        <div class="eyebrow">Licensed Primary Health Care Centre · Lagos</div>
-        <h1>Care that does not close.</h1>
-        <p class="lede">
-          Longlife Hospital has served Oshodi since 2005 — a fully licensed private facility
-          running clinic, maternity, laboratory, scan, surgery and emergency services
-          every hour of the day, with an in-house pharmacy that dispenses straight onto
-          the patient's own card.
-        </p>
-        <div class="cta-row">
-          <a class="btn" href="#/login">${icon("logout", 17)} Staff portal login</a>
-          <a class="btn ghost" href="#services">See our services</a>
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow rise rise-1">Licensed Primary Health Care Centre, Lagos</div>
+            <h1 class="rise rise-2">The ward that <em>never</em> closes.</h1>
+            <p class="lede rise rise-3">
+              Longlife Hospital has kept its doors open on Owoseni Street since 2005.
+              Clinic, maternity, laboratory, scan, surgery and emergency care, staffed
+              through every hour of the night, with a pharmacy that dispenses straight
+              onto the patient's own card.
+            </p>
+            <div class="cta-row rise rise-4">
+              <a class="btn" href="#/quote">Get a cost estimate</a>
+              <a class="btn ghost" href="#contact">Find the hospital</a>
+            </div>
+          </div>
+          <div class="dial rise rise-4" aria-hidden="true">
+            <div>
+              <div class="num">24/7</div>
+              <div class="cap">Since 2005</div>
+            </div>
+          </div>
         </div>
 
         <div class="facts">
           <div class="fact">
             <div class="k">Established</div>
             <div class="v">5 Jan 2005</div>
-            <div class="s">${new Date().getFullYear() - 2005} years of service</div>
+            <div class="s">${years} years on the same street</div>
           </div>
           <div class="fact">
-            <div class="k">Opening hours</div>
-            <div class="v">24 / 7</div>
-            <div class="s">Including public holidays</div>
+            <div class="k">Doors</div>
+            <div class="v">Always open</div>
+            <div class="s">Nights, weekends, public holidays</div>
           </div>
           <div class="fact">
             <div class="k">Registration</div>
-            <div class="v">PHC Licensed</div>
-            <div class="s">Nigeria Ministry of Health</div>
+            <div class="v">MoH licensed</div>
+            <div class="s">Primary Health Care Centre</div>
           </div>
           <div class="fact">
             <div class="k">Patients on file</div>
@@ -219,14 +230,14 @@
     <section class="section" id="services">
       <div class="section-head">
         <div class="eyebrow">What we do</div>
-        <h2>Seven services under one roof, day and night.</h2>
-        <p>Everything below is delivered on site at Owoseni Street, so a patient who arrives
-           at 3am for emergency care can be seen, tested and dispensed to without leaving the building.</p>
+        <h2>Seven departments, one building, every hour.</h2>
+        <p>A patient who arrives at three in the morning can be seen, tested, operated on
+           and dispensed to without leaving Owoseni Street.</p>
       </div>
       <div class="svc-grid">
-        ${SERVICES.map(s => `
+        ${SERVICES.map((s, i) => `
           <article class="svc">
-            <div class="ic">${icon(s.icon, 21)}</div>
+            <span class="idx">${String(i + 1).padStart(2, "0")}</span>
             <h3>${esc(s.name)}</h3>
             <p>${esc(s.desc)}</p>
           </article>`).join("")}
@@ -236,17 +247,19 @@
     <section class="section" id="facility" style="padding-top:0;">
       <div class="two-col">
         <div>
-          <div class="section-head" style="margin-bottom:20px;">
-            <div class="eyebrow">The facility</div>
-            <h2>A registered facility, on the record.</h2>
-            <p>Longlife Hospital is a private healthcare facility registered as a Primary Health
-               Care Centre under the Nigeria Ministry of Health. Its details are listed publicly
-               in Nigerian hospital directories.</p>
-          </div>
+          <div class="eyebrow">The facility</div>
+          <h2 class="serif" style="font-size:clamp(28px,4vw,46px); margin-top:16px;">
+            A registered facility, on the public record.
+          </h2>
+          <p style="color:var(--ink-soft); font-size:16.5px; margin-top:18px; max-width:52ch;">
+            Longlife Hospital is a private facility registered as a Primary Health Care Centre
+            with the Nigeria Ministry of Health. Its details are listed publicly in Nigerian
+            hospital directories, and reproduced here exactly as they appear.
+          </p>
           <div class="note-provenance">
-            <strong>Where these details come from:</strong> the facility record below was taken from
-            the hospital's own website and Nigerian hospital directory listings. Nothing here is
-            invented — if a detail has changed, correct it in this file rather than guessing.
+            <strong>Where these details come from.</strong> The record beside this was taken from
+            the hospital's own website and Nigerian hospital directory listings. Nothing on this
+            page is invented. If a detail has changed, correct it at source rather than guessing.
           </div>
         </div>
         <div class="record-card">
@@ -254,7 +267,6 @@
             <span class="t">Facility Record</span>
             <span class="n mono">${esc(HOSPITAL.facilityCode)}</span>
           </div>
-          <div class="rc-perf"></div>
           <dl>
             <div><dt>Facility</dt><dd>${esc(HOSPITAL.name)}</dd></div>
             <div><dt>Established</dt><dd>${esc(HOSPITAL.established)}</dd></div>
@@ -271,42 +283,40 @@
       <div class="two-col">
         <div>
           <div class="eyebrow">Find us</div>
-          <h2 style="font-size:clamp(24px,3.4vw,34px); margin-top:10px;">Come in, or call ahead.</h2>
+          <h2 class="serif" style="font-size:clamp(28px,4vw,46px); margin-top:16px;">
+            Come in, or call ahead.
+          </h2>
           <ul class="contact-list">
             <li>
-              <span class="ic">${icon("pin")}</span>
-              <span><span class="k">Address</span><br>
-              <span class="v">${esc(HOSPITAL.address)}</span><br>
-              <span style="color:var(--ink-soft); font-size:13px;">${esc(HOSPITAL.lga)}</span></span>
+              <span class="k">Address</span>
+              <span class="v">${esc(HOSPITAL.address)}<br>
+                <span style="color:var(--ink-faint); font-size:13.5px;">${esc(HOSPITAL.lga)}</span></span>
             </li>
             <li>
-              <span class="ic">${icon("phone")}</span>
-              <span><span class="k">Telephone</span><br>
-              ${HOSPITAL.phones.map(p => `<a class="v" href="tel:${p.replace(/-/g, "")}">${esc(p)}</a>`).join(" &nbsp;·&nbsp; ")}</span>
+              <span class="k">Telephone</span>
+              <span class="v">${HOSPITAL.phones.map(p => `<a href="tel:${p.replace(/-/g, "")}">${esc(p)}</a>`).join("&nbsp; &nbsp;")}</span>
             </li>
             <li>
-              <span class="ic">${icon("mail")}</span>
-              <span><span class="k">Email</span><br>
-              <a class="v" href="mailto:${esc(HOSPITAL.email)}">${esc(HOSPITAL.email)}</a></span>
+              <span class="k">Email</span>
+              <span class="v"><a href="mailto:${esc(HOSPITAL.email)}">${esc(HOSPITAL.email)}</a></span>
             </li>
             <li>
-              <span class="ic">${icon("clock")}</span>
-              <span><span class="k">Opening hours</span><br>
-              <span class="v">Open 24 hours, every day</span></span>
+              <span class="k">Opening hours</span>
+              <span class="v">Open 24 hours, every day of the year</span>
             </li>
           </ul>
         </div>
         <div class="panel">
           <header><h3>Staff portal</h3></header>
           <div class="panel-body">
-            <p style="margin-top:0; color:var(--ink-soft); font-size:14px;">
+            <p style="margin-top:0; color:var(--ink-soft); font-size:14.5px;">
               Doctors, nurses, pharmacists and administrators each sign in with their own
               account. Cards issued at the front desk, prescriptions written in the consulting
-              room and drugs dispensed at the pharmacy all land on the same patient record.
+              room and drugs dispensed at the pharmacy all land on one patient record.
             </p>
-            <div class="row" style="margin-top:16px;">
+            <div class="row" style="margin-top:20px;">
               <a class="btn" href="#/login">Sign in to the portal</a>
-              <a class="btn subtle" href="#/quote">Get a cost estimate</a>
+              <a class="btn subtle" href="#/quote">Cost estimate</a>
             </div>
           </div>
         </div>
@@ -402,7 +412,7 @@
         </div>
         <p style="font-size:12px; color:var(--ink-faint); margin-top:14px;">
           This is an estimate for planning, not a bill. Final charges depend on what the
-          doctor finds, and prices can change — confirm with the front desk on
+          doctor finds, and prices can change. Confirm with the front desk on
           ${HOSPITAL.phones[0]}.
         </p>
       </div>
@@ -471,7 +481,7 @@
           <strong class="mono" style="font-size:18px;">${money(priced.total)}</strong>
         </div>
         <p style="font-size:11px; color:var(--ink-faint); margin-top:12px;">
-          Estimate only — valid 14 days. Final charges depend on the doctor's assessment.
+          Estimate only, valid 14 days. Final charges depend on the doctor's assessment.
         </p>`
       : `<div class="empty" style="padding:26px 10px;">Pick a service or medicine on the left and it will appear here.</div>`}`;
 
@@ -489,7 +499,7 @@
     const name = (document.getElementById("q_name") || {}).value || "";
     const phone = (document.getElementById("q_phone") || {}).value || "";
     const lines = [
-      "LONGLIFE HOSPITAL — COST ESTIMATE",
+      "LONGLIFE HOSPITAL COST ESTIMATE",
       HOSPITAL.address,
       HOSPITAL.phones.join(" / "),
       "",
@@ -523,11 +533,11 @@
         <div>
           <h2>One patient card. Every department.</h2>
           <p>The front desk issues the card, the nurse records vitals on it, the doctor
-             prescribes against it and the pharmacy dispenses from it — each drug, price
+             prescribes against it and the pharmacy dispenses from it, so each drug, price
              and dispenser landing on the same record automatically.</p>
         </div>
         <p style="font-size:12.5px; color:rgba(238,247,243,.55); margin:0;">
-          ${esc(HOSPITAL.address)} · Open 24/7
+          ${esc(HOSPITAL.address)}<br>Open 24 hours
         </p>
       </aside>
 
@@ -550,11 +560,11 @@
           </form>
 
           <div class="demo-creds">
-            <h4>Demonstration accounts — PIN 1234</h4>
+            <h4>Demonstration accounts, PIN 1234</h4>
             ${demo.map(u => `
               <div class="row" style="justify-content:space-between; gap:10px; padding:3px 0;">
                 <span><strong class="mono" style="font-size:12px;">${esc(u.username)}</strong>
-                  <span style="color:var(--ink-soft);"> · ${esc(LL.ROLES[u.role].label)}</span></span>
+                  <span style="color:var(--ink-soft);">, ${esc(LL.ROLES[u.role].label)}</span></span>
                 <button type="button" data-action="fill-login" data-user="${esc(u.username)}">use</button>
               </div>`).join("")}
             <p style="margin:10px 0 0; color:var(--ink-faint); font-size:11.5px;">
@@ -649,10 +659,10 @@
     const acts = LL.data().activity.slice(0, 7);
 
     const roleGreeting = {
-      doctor: "Your consulting room at a glance — who is waiting and what you have prescribed today.",
-      nurse: "Front desk and ward view — cards issued, vitals taken and who still needs attention.",
-      pharmacist: "Pharmacy view — prescriptions waiting, stock that needs ordering and today's dispensing.",
-      admin: "Whole-facility view — patients, pharmacy, money and the audit trail."
+      doctor: "Your consulting room at a glance: who is waiting, and what you have prescribed today.",
+      nurse: "Front desk and ward view: cards issued, vitals taken, and who still needs attention.",
+      pharmacist: "Pharmacy view: prescriptions waiting, stock that needs ordering, and today's dispensing.",
+      admin: "The whole facility: patients, pharmacy, money and the audit trail."
     }[user.role];
 
     return `
@@ -715,7 +725,7 @@
                   <span class="d">${esc(a.detail)}</span>
                 </span>
               </div>`).join("")
-              : `<div class="empty">Nothing needs attention — stock, expiry dates and the dispense queue are all clear.</div>`}
+              : `<div class="empty">Nothing needs attention. Stock, expiry dates and the dispense queue are all clear.</div>`}
           </div>
         </div>
       </div>
@@ -755,7 +765,7 @@
                 <span class="tl-when">${esc(LL.fmtDateTime(a.at))}</span>
                 <span class="tl-what">
                   <span class="t">${esc(a.action)}</span>
-                  <span class="d">${esc(a.detail)} — ${esc(a.userName)}</span>
+                  <span class="d">${esc(a.detail)}, by ${esc(a.userName)}</span>
                 </span>
               </div>`).join("")}</div>` : `<div class="empty">No activity recorded yet.</div>`}
           </div>
@@ -805,7 +815,7 @@
       <td class="num"><a href="#/app/patient/${p.id}" style="font-weight:700; text-decoration:none;">${esc(p.cardNo)}</a></td>
       <td><a href="#/app/patient/${p.id}" style="font-weight:600; text-decoration:none; color:inherit;">${esc(p.name)}</a></td>
       <td>${esc(p.sex)} · ${p.age}</td>
-      <td class="num">${esc(p.phone || "—")}</td>
+      <td class="num">${esc(p.phone || "·")}</td>
       <td>${esc(p.cardType)}</td>
       <td class="num">${money(p.cardFee)}</td>
       <td class="num">${esc(LL.fmtDate(p.createdAt))}</td>
@@ -848,11 +858,11 @@
             </header>
             <div class="panel-body">
               <div class="form-grid">
-                ${[["Sex", p.sex], ["Age", p.age + " years"], ["Phone", p.phone || "—"],
-                   ["Blood group", p.bloodGroup || "—"], ["Card type", p.cardType],
+                ${[["Sex", p.sex], ["Age", p.age + " years"], ["Phone", p.phone || "·"],
+                   ["Blood group", p.bloodGroup || "·"], ["Card type", p.cardType],
                    ["Card fee", money(p.cardFee)], ["Card issued", LL.fmtDate(p.createdAt)],
                    ["Issued by", p.createdBy], ["Card expires", LL.fmtDate(p.expiresAt)],
-                   ["Address", p.address || "—"], ["Next of kin", p.nextOfKin || "—"]]
+                   ["Address", p.address || "·"], ["Next of kin", p.nextOfKin || "·"]]
                   .map(([k, v]) => `<div>
                     <div style="font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-faint);">${esc(k)}</div>
                     <div style="font-weight:600; margin-top:2px;">${esc(v)}</div>
@@ -879,8 +889,8 @@
                     const d = LL.drugById(m.drugId);
                     return `<tr>
                       <td class="num">${esc(LL.fmtDate(m.date))}</td>
-                      <td>${esc(d ? d.name : "—")}</td>
-                      <td>${esc(d ? d.dosage + " " + d.form : "—")}</td>
+                      <td>${esc(d ? d.name : "·")}</td>
+                      <td>${esc(d ? d.dosage + " " + d.form : "·")}</td>
                       <td class="num">${m.qty}</td>
                       <td class="num">${money(m.unitPrice)}</td>
                       <td class="num">${money(m.qty * m.unitPrice)}</td>
@@ -906,7 +916,7 @@
                     <span class="d">${esc(LL.fmtDateTime(rx.at))} · ${esc(rx.doctorName)}</span>
                     <span class="d">${rx.items.map(i => {
                       const d = LL.drugById(i.drugId);
-                      return esc((d ? d.name + " " + d.dosage : "Drug") + " ×" + i.qty + (i.instruction ? " — " + i.instruction : ""));
+                      return esc((d ? d.name + " " + d.dosage : "Drug") + " ×" + i.qty + (i.instruction ? ", " + i.instruction : ""));
                     }).join("<br>")}</span>
                   </span>
                   ${rx.status === "pending" && LL.can(user, "pharmacy.dispense")
@@ -924,12 +934,12 @@
                   <thead><tr><th>Taken</th><th class="num">BP</th><th class="num">Temp</th><th class="num">Pulse</th><th class="num">Weight</th><th>By</th><th>Note</th></tr></thead>
                   <tbody>${vits.map(v => `<tr>
                     <td class="num">${esc(LL.fmtDateTime(v.at))}</td>
-                    <td class="num">${esc(v.bp || "—")}</td>
-                    <td class="num">${v.temp ? v.temp + "°C" : "—"}</td>
-                    <td class="num">${v.pulse || "—"}</td>
-                    <td class="num">${v.weight ? v.weight + "kg" : "—"}</td>
+                    <td class="num">${esc(v.bp || "·")}</td>
+                    <td class="num">${v.temp ? v.temp + "°C" : "·"}</td>
+                    <td class="num">${v.pulse || "·"}</td>
+                    <td class="num">${v.weight ? v.weight + "kg" : "·"}</td>
                     <td>${esc(v.takenBy)}</td>
-                    <td style="white-space:normal; min-width:220px;">${esc(v.note || "—")}</td>
+                    <td style="white-space:normal; min-width:220px;">${esc(v.note || "·")}</td>
                   </tr>`).join("")}</tbody>
                 </table>
               </div>` : `<div class="empty">No vitals recorded.</div>`}
@@ -1018,7 +1028,7 @@
       <div class="pc-head">
         <div>
           <div class="pc-hosp">LONGLIFE HOSPITAL</div>
-          <div class="pc-sub">Oshodi · Lagos · Est. 2005</div>
+          <div class="pc-sub">Oshodi Lagos, est. 2005</div>
         </div>
         <div class="pc-sub" style="text-align:right;">${esc(p.cardType)}<br>card</div>
       </div>
@@ -1026,7 +1036,7 @@
       <div class="pc-name">${esc(p.name)}</div>
       <div class="pc-meta">
         <span><span class="k">Sex / Age</span><br><span class="v">${esc(p.sex)} · ${p.age}</span></span>
-        <span><span class="k">Blood</span><br><span class="v">${esc(p.bloodGroup || "—")}</span></span>
+        <span><span class="k">Blood</span><br><span class="v">${esc(p.bloodGroup || "·")}</span></span>
         <span><span class="k">Issued</span><br><span class="v">${esc(LL.fmtDate(p.createdAt))}</span></span>
         <span><span class="k">Expires</span><br><span class="v">${esc(LL.fmtDate(p.expiresAt))}</span></span>
       </div>
@@ -1061,9 +1071,9 @@
               }, 0);
               return `<tr>
                 <td class="num">${esc(LL.fmtDateTime(rx.at))}</td>
-                <td>${p ? `<a href="#/app/patient/${p.id}" style="text-decoration:none; font-weight:600;">${esc(p.name)}</a>` : "—"}</td>
-                <td class="num">${esc(p ? p.cardNo : "—")}</td>
-                <td style="white-space:normal; max-width:220px;">${esc(rx.diagnosis || "—")}</td>
+                <td>${p ? `<a href="#/app/patient/${p.id}" style="text-decoration:none; font-weight:600;">${esc(p.name)}</a>` : "·"}</td>
+                <td class="num">${esc(p ? p.cardNo : "·")}</td>
+                <td style="white-space:normal; max-width:220px;">${esc(rx.diagnosis || "·")}</td>
                 <td class="num">${rx.items.length}</td>
                 <td>${esc(rx.doctorName)}</td>
                 <td class="num">${money(value)}</td>
@@ -1139,10 +1149,10 @@
                   ${icon("check", 15)} Dispense &amp; bill to card
                 </button>
                 ${p ? `<a class="btn subtle sm" href="#/app/patient/${p.id}">Open patient record</a>` : ""}
-                ${blocked ? `<span class="pill crit">Blocked — stock cannot cover this prescription</span>` : ""}
+                ${blocked ? `<span class="pill crit">Blocked, stock cannot cover this</span>` : ""}
               </div>
             </div>`;
-          }).join("") : `<div class="empty">The queue is empty — every prescription has been dispensed.</div>`}
+          }).join("") : `<div class="empty">The queue is empty. Every prescription has been dispensed.</div>`}
         </div>
       </div>
     </div>`;
@@ -1220,8 +1230,8 @@
                   <td class="num">${money(d.unitPrice)}</td>
                   <td class="num">${st.stock}</td>
                   <td class="num">${d.reorderLevel}</td>
-                  <td class="num">${esc(d.batch || "—")}</td>
-                  <td class="num">${esc(d.expiry ? LL.fmtDate(d.expiry) : "—")}</td>
+                  <td class="num">${esc(d.batch || "·")}</td>
+                  <td class="num">${esc(d.expiry ? LL.fmtDate(d.expiry) : "·")}</td>
                   <td><span class="pill ${st.cls}">${esc(st.label)}</span></td>
                 </tr>`;
               }).join("")}</tbody>
@@ -1246,13 +1256,13 @@
                 return `<tr>
                   <td class="num">${esc(LL.fmtDate(m.date))}</td>
                   <td><span class="pill ${m.type === "IN" ? "brand" : "muted"}">${m.type === "IN" ? "Stock in" : "Dispensed"}</span></td>
-                  <td>${esc(d ? d.name + " " + d.dosage : "—")}</td>
+                  <td>${esc(d ? d.name + " " + d.dosage : "·")}</td>
                   <td class="num">${m.qty}</td>
                   <td class="num">${money(m.unitPrice)}</td>
                   <td class="num">${money(m.qty * m.unitPrice)}</td>
-                  <td>${m.patientId ? `<a href="#/app/patient/${m.patientId}" style="text-decoration:none;">${esc(m.patientName || "Patient")}</a>` : "—"}</td>
+                  <td>${m.patientId ? `<a href="#/app/patient/${m.patientId}" style="text-decoration:none;">${esc(m.patientName || "Patient")}</a>` : "·"}</td>
                   <td>${esc(m.staffName)}</td>
-                  <td style="white-space:normal; max-width:220px;">${esc(m.note || "—")}</td>
+                  <td style="white-space:normal; max-width:220px;">${esc(m.note || "·")}</td>
                 </tr>`;
               }).join("") : `<tr><td colspan="9"><div class="empty">No stock movements yet.</div></td></tr>`}</tbody>
             </table>
@@ -1374,10 +1384,10 @@
             <table class="data">
               <thead><tr><th>Receipt</th><th>When</th><th>Patient</th><th>For</th><th>Method</th><th class="num">Amount</th><th>Received by</th></tr></thead>
               <tbody>${payments.map(p => `<tr>
-                <td class="num"><strong>${esc(p.ref || "—")}</strong></td>
+                <td class="num"><strong>${esc(p.ref || "·")}</strong></td>
                 <td class="num">${esc(LL.fmtDateTime(p.at))}</td>
                 <td><a href="#/app/patient/${p.patientId}" style="text-decoration:none;">${esc(p.patientName)}</a></td>
-                <td style="white-space:normal; min-width:180px;">${esc(p.forWhat || "—")}</td>
+                <td style="white-space:normal; min-width:180px;">${esc(p.forWhat || "·")}</td>
                 <td><span class="pill muted">${esc(p.method)}</span></td>
                 <td class="num"><strong>${money(p.amount)}</strong></td>
                 <td>${esc(p.staffName)}</td>
@@ -1566,13 +1576,13 @@
 
   function patientOptions(selected) {
     return LL.data().patients.map(p =>
-      `<option value="${p.id}" ${p.id === selected ? "selected" : ""}>${esc(p.name)} — ${esc(p.cardNo)}</option>`).join("");
+      `<option value="${p.id}" ${p.id === selected ? "selected" : ""}>${esc(p.name)}, ${esc(p.cardNo)}</option>`).join("");
   }
 
   function drugOptions(selected) {
     return LL.data().drugs.map(d => {
       const st = LL.drugStatus(d);
-      return `<option value="${d.id}" ${d.id === selected ? "selected" : ""}>${esc(d.name)} ${esc(d.dosage)} — ${st.stock} in stock</option>`;
+      return `<option value="${d.id}" ${d.id === selected ? "selected" : ""}>${esc(d.name)} ${esc(d.dosage)}, ${st.stock} in stock</option>`;
     }).join("");
   }
 
@@ -1601,16 +1611,16 @@
               </select></div>
             <div class="field"><label for="np_type">Card type</label>
               <select id="np_type" name="cardType">
-                <option value="Standard" data-fee="2000">Standard — ₦2,000</option>
-                <option value="Antenatal" data-fee="3500">Antenatal — ₦3,500</option>
-                <option value="Child" data-fee="1500">Child — ₦1,500</option>
-                <option value="Family" data-fee="5000">Family — ₦5,000</option>
+                <option value="Standard" data-fee="2000">Standard, ₦2,000</option>
+                <option value="Antenatal" data-fee="3500">Antenatal, ₦3,500</option>
+                <option value="Child" data-fee="1500">Child, ₦1,500</option>
+                <option value="Family" data-fee="5000">Family, ₦5,000</option>
               </select></div>
             <div class="field"><label for="np_fee">Card fee (₦)</label>
               <input id="np_fee" name="cardFee" type="number" min="0" step="any" value="2000" required>
-              <span class="help">Filled in from the card type — change it if the desk agreed another price.</span></div>
+              <span class="help">Filled in from the card type. Change it if the desk agreed another price.</span></div>
             <div class="field"><label for="np_kin">Next of kin</label>
-              <input id="np_kin" name="nextOfKin" placeholder="Name · phone"></div>
+              <input id="np_kin" name="nextOfKin" placeholder="Name and phone"></div>
           </div>
           <div class="field" style="margin-top:14px;"><label for="np_addr">Address</label>
             <input id="np_addr" name="address" placeholder="Street, area"></div>
@@ -1870,11 +1880,11 @@
           <div class="form-grid">
             <div class="field"><label for="ch_service">Service</label>
               <select id="ch_service" name="serviceId" required>
-                ${services.map(s => `<option value="${s.id}" data-price="${s.price}">${esc(s.name)} — ${money(s.price)}</option>`).join("")}
+                ${services.map(s => `<option value="${s.id}" data-price="${s.price}">${esc(s.name)}, ${money(s.price)}</option>`).join("")}
               </select></div>
             <div class="field"><label for="ch_amount">Amount (₦)</label>
               <input id="ch_amount" name="amount" type="number" min="0" step="any" value="${services[0] ? services[0].price : 0}" required>
-              <span class="help">Taken from the price list — change it if a different price was agreed.</span></div>
+              <span class="help">Taken from the price list. Change it if a different price was agreed.</span></div>
           </div>
         </div>
         <div class="modal-foot">
@@ -2035,11 +2045,11 @@
     const res = LL.dispensePrescription(rxId, user);
     if (!res.ok) {
       const why = res.blocked.map(b => (b.drug ? b.drug + ": " : "") + b.reason).join("; ");
-      toast("Cannot dispense — " + why, "crit");
+      toast("Cannot dispense. " + why, "crit");
       render();
       return;
     }
-    toast("Dispensed and billed to the patient's card — " + money(res.total), "good");
+    toast("Dispensed and billed to the patient's card, " + money(res.total), "good");
     render();
   }
 
@@ -2146,7 +2156,7 @@
           "&body=" + encodeURIComponent(quoteText()) +
           "&cc=" + encodeURIComponent(HOSPITAL.email);
         window.location.href = href;
-        toast(to ? "Opening your email app…" : "Opening your email app — add the address there.", "good");
+        toast(to ? "Opening your email app…" : "Opening your email app. Add the address there.", "good");
         break;
       }
 
@@ -2214,10 +2224,10 @@
         const f = LL.finance();
         const rows = [["Longlife Hospital finance records", "generated " + LL.fmtDate(LL.todayISO())], [],
           ["Summary", "Amount (NGN)"],
-          ["Billed — patient cards", f.cardsBilled],
-          ["Billed — services", f.servicesBilled],
-          ["Billed — drugs", f.drugsBilled],
-          ["Billed — total", f.billed],
+          ["Billed, patient cards", f.cardsBilled],
+          ["Billed, services", f.servicesBilled],
+          ["Billed, drugs", f.drugsBilled],
+          ["Billed, total", f.billed],
           ["Received", f.received],
           ["Outstanding", f.outstanding],
           ["Spent", f.spent],
@@ -2312,12 +2322,12 @@
       const fd = Object.fromEntries(new FormData(form).entries());
       const res = LL.dispenseDirect(fd, user);
       if (!res.ok) {
-        toast("Cannot dispense — " + res.blocked.map(b => (b.drug ? b.drug + ": " : "") + b.reason).join("; "), "crit");
+        toast("Cannot dispense. " + res.blocked.map(b => (b.drug ? b.drug + ": " : "") + b.reason).join("; "), "crit");
         return;
       }
       closeModal();
       render();
-      toast("Dispensed and billed — " + money(res.total), "good");
+      toast("Dispensed and billed, " + money(res.total), "good");
       return;
     }
 
@@ -2339,7 +2349,7 @@
       if (!res.ok) { toast("Select a patient and an amount above zero.", "warn"); return; }
       closeModal();
       render();
-      toast("Payment " + res.payment.ref + " recorded — " + money(res.payment.amount), "good");
+      toast("Payment " + res.payment.ref + " recorded, " + money(res.payment.amount), "good");
       return;
     }
 
@@ -2361,7 +2371,7 @@
       if (!res.ok) { toast("Select a patient and a service.", "warn"); return; }
       closeModal();
       render();
-      toast(res.charge.name + " billed — " + money(res.charge.amount), "good");
+      toast(res.charge.name + " billed, " + money(res.charge.amount), "good");
       return;
     }
 
