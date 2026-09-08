@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: gmc-vuln-scanner
+    runtime: node
+    plan: free
+    rootDir: vuln-scanner
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_VERSION
+        value: 20

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GMC Vulnerability Scanner</title>
+<meta name="description" content="Passive security scanner: checks headers, TLS, cookies and exposed files, with plain-English fixes and attacker context.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="page">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">◈</span>
+      <div>
+        <h1>GMC Vulnerability Scanner</h1>
+        <p class="tagline">Passive security posture scans — headers, TLS, cookies, exposed files — with attacker context and fixes.</p>
+      </div>
+    </div>
+    <button id="theme-toggle" class="icon-btn" title="Toggle theme" aria-label="Toggle color theme">🌗</button>
+  </header>
+
+  <main>
+
+    <section class="panel scan-panel">
+      <form id="scan-form" autocomplete="off">
+        <label for="url-input" class="field-label">Website to scan</label>
+        <div class="input-row">
+          <input id="url-input" name="url" type="text" placeholder="https://example.com" required inputmode="url">
+          <button id="scan-btn" type="submit" class="btn btn-primary">Scan</button>
+        </div>
+
+        <label class="consent-row">
+          <input id="consent-check" type="checkbox" required>
+          <span>I own this website, or I have explicit written permission to security-test it.</span>
+        </label>
+
+        <p class="scope-note">
+          This scans passively and non-destructively — the same kind of requests a browser makes — and checks
+          for the checks listed at the bottom of this page. It does not attempt to break in, inject payloads,
+          brute-force logins, or exploit anything it finds.
+        </p>
+      </form>
+    </section>
+
+    <section id="progress-panel" class="panel progress-panel hidden">
+      <div class="spinner" aria-hidden="true"></div>
+      <div id="progress-label">Starting scan…</div>
+      <ul id="progress-log" class="progress-log"></ul>
+    </section>
+
+    <section id="error-panel" class="panel error-panel hidden">
+      <strong>Scan couldn't run.</strong>
+      <p id="error-message"></p>
+    </section>
+
+    <section id="results" class="results hidden">
+
+      <div class="panel summary-panel">
+        <div class="grade-badge" id="grade-badge">A</div>
+        <div class="summary-main">
+          <div class="summary-target" id="summary-target">—</div>
+          <div class="summary-meta" id="summary-meta">—</div>
+          <div class="severity-chips" id="severity-chips"></div>
+        </div>
+        <div class="summary-actions">
+          <button id="download-json" class="btn btn-ghost">Download JSON</button>
+          <button id="print-report" class="btn btn-ghost">Print / Save PDF</button>
+          <button id="new-scan" class="btn btn-ghost">New scan</button>
+        </div>
+      </div>
+
+      <div id="notes-panel" class="panel notes-panel hidden">
+        <strong>Some checks were skipped:</strong>
+        <ul id="notes-list"></ul>
+      </div>
+
+      <div class="panel findings-panel">
+        <div class="findings-header">
+          <h2>Findings</h2>
+          <div class="filter-row" id="filter-row"></div>
+        </div>
+        <div id="findings-list" class="findings-list"></div>
+        <p id="no-findings" class="hidden">No issues found by these checks. That doesn't guarantee the site is
+          fully secure — it means it passed this specific, passive set of checks.</p>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <details>
+      <summary>What this scanner checks (and what it doesn't)</summary>
+      <div class="footer-grid">
+        <div>
+          <h3>Checks performed</h3>
+          <ul>
+            <li>HTTPS enforcement, TLS version and certificate validity</li>
+            <li>Security headers: HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy</li>
+            <li>Cookie flags: Secure, HttpOnly, SameSite</li>
+            <li>CORS configuration (wildcard origins combined with credentials)</li>
+            <li>Server/technology banner disclosure</li>
+            <li>Common exposed files: <code>.env</code>, <code>.git</code>, backups, credentials</li>
+            <li>Directory listing, mixed content, outdated front-end libraries</li>
+            <li>robots.txt hints and security.txt presence</li>
+          </ul>
+        </div>
+        <div>
+          <h3>What it deliberately does not do</h3>
+          <ul>
+            <li>No SQL injection, XSS, or other payload injection</li>
+            <li>No login brute-forcing or credential attacks</li>
+            <li>No denial-of-service / load testing</li>
+            <li>No port scanning beyond the site's own web port</li>
+            <li>No automated exploitation of anything it finds</li>
+          </ul>
+          <p class="fine-print">Only scan sites you own or have explicit permission to test. Scanning third-party
+            sites without authorization may be illegal in your jurisdiction, even for passive checks like these.</p>
+        </div>
+      </div>
+    </details>
+  </footer>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
