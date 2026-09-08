@@ -10,6 +10,21 @@ produces a standalone HTML report.
 Zero dependencies — everything runs on Node's built-in `http`/`https`/`tls`
 modules. There is nothing to `npm install`.
 
+## Get a public link (scan any site, no local setup)
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/tiamiyu6/GMC)
+
+This deploys the dashboard to Render's free tier under your own account and
+gives you a real `https://your-app.onrender.com` link — type any URL into
+it and it scans live, exactly like running it locally. `render.yaml` at the
+repo root does the setup; the button above is a starting point, not a
+guarantee — if it doesn't pick up this branch automatically, create the
+service manually on Render instead: **New → Web Service**, point it at this
+repo, set **Root Directory** to `vuln-scanner`, **Build Command** to
+`npm install`, **Start Command** to `node server.js`. Free-tier services
+spin down after inactivity, so the first scan after a while can take
+~30 seconds to wake up.
+
 ## Why this isn't a plain static page
 
 A browser-only page cannot inspect another site's response headers or TLS
