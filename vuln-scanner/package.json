@@ -1,0 +1,15 @@
+{
+  "name": "gmc-vuln-scanner",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Passive website security scanner with a live dashboard UI and a CLI report generator.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "scan": "node cli.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {}
+}

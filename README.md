@@ -16,6 +16,7 @@ from the `main` branch.
 | `longlife-app.js` | Hash router, views, modals, command palette |
 | `tools/build-single-file.js` | Inlines everything into one HTML file for hosting elsewhere |
 | `accessnet-investment-proposal.html` | Unrelated earlier document, kept for reference |
+| `vuln-scanner/` | Unrelated project: a passive website security scanner (dashboard + CLI). See `vuln-scanner/README.md` |
 
 ## The public site
 
