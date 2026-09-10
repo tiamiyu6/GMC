@@ -1,4 +1,4 @@
-# Longlife Hospital — Care System
+# Longlife Hospital
 
 The public site and staff portal for **Longlife Hospital**, No. 22 Owoseni Street,
 Oshodi, Lagos. Plain static files: no build step, no server, no dependencies.
@@ -10,7 +10,7 @@ from the `main` branch.
 
 | File | What it is |
 | --- | --- |
-| `index.html` | Page shell — loads the stylesheet and the two scripts |
+| `index.html` | Page shell that loads the stylesheet and the two scripts |
 | `longlife-hospital.css` | Design tokens and every component style, light and dark |
 | `longlife-data.js` | Store, models, role permissions, seed data, derived queries |
 | `longlife-app.js` | Hash router, views, modals, command palette |
@@ -20,8 +20,8 @@ from the `main` branch.
 
 ## The public site
 
-- Hospital home page — services, facility record and contact details
-- **Cost estimate** (`#/quote`) — a patient ticks the services and medicines they
+- Hospital home page with services, facility record and contact details
+- **Cost estimate** (`#/quote`) where a patient ticks the services and medicines they
   need, sees an itemised total, then prints it or emails it to themselves
 
 ## The staff portal
@@ -39,7 +39,7 @@ Every demonstration account uses the PIN `1234`.
 
 ### How the work flows
 
-1. The nurse issues a **patient card** — the card number, fee and expiry are generated
+1. The nurse issues a **patient card**. The card number, fee and expiry are generated
    automatically and the card can be printed.
 2. The doctor writes a **prescription**, which lands in the pharmacy's dispense queue.
 3. The pharmacist dispenses it in one action: stock is deducted, the drugs are priced,
@@ -58,14 +58,14 @@ a command palette (<kbd>Ctrl</kbd>+<kbd>K</kbd>) and CSV export throughout.
 ## Setting your own prices
 
 The service tariff used by the cost estimate and by service charges lives in the
-`services` array in `longlife-data.js`. The prices there are placeholders — replace
+`services` array in `longlife-data.js`. The prices there are placeholders. Replace
 them with the hospital's real tariff. Drug prices come from the pharmacy catalogue and
 are edited in the portal.
 
 ## Important limitation
 
 **This is a demonstration system.** All data is stored in the browser's `localStorage`
-on each device, and the PIN check is a role switch rather than real authentication —
+on each device, and the PIN check is a role switch rather than real authentication:
 PINs are stored in plain text and anyone using the browser can read or change the data.
 Nothing is shared between devices or staff members.
 
@@ -78,5 +78,5 @@ The facility details on the site were taken from the hospital's own website and
 Nigerian hospital directory listings: established 5 January 2005, registered as a
 Primary Health Care Centre with the Nigeria Ministry of Health (facility code
 24/18/1/2/2/0021), open 24 hours every day. They live in the `HOSPITAL` object at the
-top of the public-site section of `longlife-app.js` — correct them there if anything
+top of the public site section of `longlife-app.js`. Correct them there if anything
 has changed.
