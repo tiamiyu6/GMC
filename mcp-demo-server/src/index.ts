@@ -90,6 +90,43 @@ server.registerTool(
   }
 );
 
+server.registerTool(
+  "flip_coin",
+  {
+    title: "Flip Coin",
+    description: "Flips one or more coins and returns heads or tails for each.",
+    inputSchema: {
+      count: z
+        .number()
+        .int()
+        .min(1)
+        .max(20)
+        .default(1)
+        .describe("How many coins to flip"),
+    },
+    annotations: {
+      readOnlyHint: true,
+      idempotentHint: false,
+      openWorldHint: false,
+    },
+  },
+  async ({ count }) => {
+    const flips = Array.from({ length: count }, () =>
+      Math.random() < 0.5 ? "heads" : "tails"
+    );
+
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Flipped ${count} coin(s): [${flips.join(", ")}]`,
+        },
+      ],
+      structuredContent: { flips },
+    };
+  }
+);
+
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
